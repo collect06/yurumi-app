@@ -15,7 +15,7 @@ export default function InputPage() {
   const [category, setCategory] = useState("コンビニ")
   const [budget, setBudget] = useState("")
 
-  const categories = ["コンビニ", "外食", "デート", "衝動買い", "その他"]
+  const categories = ["コンビニ", "たばこ", "外食", "デート", "衝動買い", "その他"]
 
   // 予算取得
   useEffect(() => {
