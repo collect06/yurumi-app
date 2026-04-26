@@ -20,19 +20,43 @@ export default function InputPage() {
 
   // 予算取得
   useEffect(() => {
-    const fetchBudget = async () => {
-      const { data } = await supabase
-        .from("budgets")
+  const fetchBudget = async () => {
+    const { data } = await supabase
+      .from("budgets")
+      .select("*")
+      .eq("month", month)
+      .single()
+
+    if (data) setBudget(String(data.amount))
+    else setBudget("")
+  }
+
+  const insertFixedCosts = async () => {
+    const { data: fixed } = await supabase.from("fixed_costs").select("*")
+
+    for (const f of fixed || []) {
+      const { data: existing } = await supabase
+        .from("expenses")
         .select("*")
         .eq("month", month)
-        .single()
+        .eq("memo", f.name)
 
-      if (data) setBudget(String(data.amount))
-      else setBudget("")
+      if (!existing || existing.length === 0) {
+        await supabase.from("expenses").insert({
+          amount: f.amount,
+          category: f.category,
+          memo: f.name,
+          month,
+          is_waste: false
+        })
+      }
     }
+  }
 
-    fetchBudget()
-  }, [month])
+  fetchBudget()
+  insertFixedCosts()
+
+}, [month])
 
   // 予算保存
   const saveBudget = async () => {
@@ -42,6 +66,29 @@ export default function InputPage() {
 
     alert("予算を保存しました")
   }
+
+  // 固定費自動追加
+  const insertFixedCosts = async () => {
+  const { data: fixed } = await supabase.from("fixed_costs").select("*")
+
+  for (const f of fixed || []) {
+    const { data: existing } = await supabase
+      .from("expenses")
+      .select("*")
+      .eq("month", month)
+      .eq("memo", f.name)
+
+    if (!existing || existing.length === 0) {
+      await supabase.from("expenses").insert({
+        amount: f.amount,
+        category: f.category,
+        memo: f.name,
+        month,
+        is_waste: false
+      })
+    }
+  }
+}
 
   // 支出追加
   const addExpense = async () => {
