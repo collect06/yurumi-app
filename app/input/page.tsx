@@ -15,6 +15,9 @@ export default function InputPage() {
   const [category, setCategory] = useState("コンビニ")
   const [budget, setBudget] = useState("")
   const [isWaste, setIsWaste] = useState(false)
+  const [fixedName, setFixedName] = useState("")
+  const [fixedAmount, setFixedAmount] = useState("")
+  const [fixedCategory, setFixedCategory] = useState("固定費")
 
   const categories = ["コンビニ", "たばこ", "外食", "デート", "charge spot", "衝動買い", "その他"]
 
@@ -67,29 +70,6 @@ export default function InputPage() {
     alert("予算を保存しました")
   }
 
-  // 固定費自動追加
-  const insertFixedCosts = async () => {
-  const { data: fixed } = await supabase.from("fixed_costs").select("*")
-
-  for (const f of fixed || []) {
-    const { data: existing } = await supabase
-      .from("expenses")
-      .select("*")
-      .eq("month", month)
-      .eq("memo", f.name)
-
-    if (!existing || existing.length === 0) {
-      await supabase.from("expenses").insert({
-        amount: f.amount,
-        category: f.category,
-        memo: f.name,
-        month,
-        is_waste: false
-      })
-    }
-  }
-}
-
   // 支出追加
   const addExpense = async () => {
     if (!amount) return
@@ -108,6 +88,20 @@ export default function InputPage() {
     setMemo("")
     alert("支出を追加しました")
   }
+
+  // 固定費自動追加
+  const addFixedCost = async () => {
+    await supabase.from("fixed_costs").insert([
+      {
+        name: fixedName,
+        amount: Number(fixedAmount),
+        category: fixedCategory
+      }
+    ])
+
+  setFixedName("")
+  setFixedAmount("")
+}
 
   return (
     <div style={container}>
@@ -185,6 +179,32 @@ export default function InputPage() {
           支出を追加
         </button>
       </div>
+
+      <h3>固定費登録</h3>
+
+      <input
+        type="text"
+        placeholder="名前（例：家賃）"
+        value={fixedName}
+        onChange={(e) => setFixedName(e.target.value)}
+      />
+
+      <input
+        type="number"
+        placeholder="金額"
+        value={fixedAmount}
+        onChange={(e) => setFixedAmount(e.target.value)}
+      />
+
+      <input
+        type="text"
+        placeholder="カテゴリ"
+        value={fixedCategory}
+        onChange={(e) => setFixedCategory(e.target.value)}
+      />
+
+      <button onClick={addFixedCost}>固定費を追加</button>
+
     </div>
   )
 }

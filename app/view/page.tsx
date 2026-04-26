@@ -20,7 +20,12 @@ export default function ViewPage() {
   const [editMemo, setEditMemo] = useState("")
 
   useEffect(() => {
-    fetchData()
+    const init = async () => {
+      await insertFixedCosts()
+      await fetchData()
+    }
+
+    init()
   }, [month])
 
   const fetchData = async () => {
@@ -78,6 +83,28 @@ export default function ViewPage() {
     }, {})
   )
 
+  const insertFixedCosts = async () => {
+    const { data: fixed } = await supabase.from("fixed_costs").select("*")
+
+    for (const f of fixed || []) {
+      const { data: existing } = await supabase
+        .from("expenses")
+        .select("id")
+        .eq("month", month)
+        .eq("memo", f.name)
+
+      if (!existing || existing.length === 0) {
+        await supabase.from("expenses").insert({
+          amount: f.amount,
+          category: f.category,
+          memo: f.name,
+          month,
+          is_waste: false
+        })
+      }
+    }
+  }
+
   return (
     <div style={container}>
       <header style={header}>
@@ -132,11 +159,13 @@ export default function ViewPage() {
               <small>{e.memo}</small>
             </div>
 
-            <button onClick={() => {
-              setEditingId(e.id)
-              setEditAmount(String(e.amount))
-              setEditMemo(e.memo || "")
-            }}>
+            <button 
+              style={deleteButton}
+              onClick={() => {
+                setEditingId(e.id)
+                setEditAmount(String(e.amount))
+                setEditMemo(e.memo || "")
+              }}>
               編集
             </button>
 
@@ -205,6 +234,15 @@ const listItem = {
   alignItems: "center",
   borderBottom: "1px solid #eee",
   padding: "10px 0",
+}
+
+const editButton = {
+  backgroundColor: "#3b82f6",
+  color: "white",
+  border: "none",
+  borderRadius: 5,
+  padding: "5px 10px",
+  cursor: "pointer",
 }
 
 const deleteButton = {
