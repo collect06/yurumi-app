@@ -14,6 +14,7 @@ export default function InputPage() {
   const [memo, setMemo] = useState("")
   const [category, setCategory] = useState("コンビニ")
   const [budget, setBudget] = useState("")
+  const [isWaste, setIsWaste] = useState(false)
 
   const categories = ["コンビニ", "たばこ", "外食", "デート", "charge spot", "衝動買い", "その他"]
 
@@ -52,6 +53,7 @@ export default function InputPage() {
         memo,
         category,
         month,
+        is_waste: isWaste
       },
     ])
 
@@ -104,6 +106,15 @@ export default function InputPage() {
           placeholder="金額"
           style={input}
         />
+
+        <select
+          value={isWaste ? "true" : "false"}
+          onChange={(e) => setIsWaste(e.target.value === "true")}
+          style={input}
+        >
+          <option value="false">通常支出</option>
+          <option value="true">無駄支出</option>
+        </select>
 
         <select
           value={category}

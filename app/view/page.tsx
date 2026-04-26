@@ -48,7 +48,10 @@ export default function ViewPage() {
   }
 
   const total = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const remaining = budget - total
+  const wasteTotal = expenses
+    .filter((e) => e.is_waste)
+    .reduce((sum, e) => sum + e.amount, 0)
+  const remaining = budget - wasteTotal
 
   const grouped = Object.values(
     expenses.reduce((acc: any, cur) => {
@@ -77,6 +80,9 @@ export default function ViewPage() {
         <div style={{ marginTop: 15 }}>
           <p>予算: <strong>{budget}円</strong></p>
           <p>合計: <strong>{total}円</strong></p>
+          <p>総支出: {total}円</p>
+          <p>無駄支出: {wasteTotal}円</p>
+          <p>残り予算: {remaining}円</p>
           <p style={{ color: remaining < 0 ? "red" : "green" }}>
             残り: <strong>{remaining}円</strong>
           </p>
