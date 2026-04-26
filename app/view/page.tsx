@@ -186,97 +186,80 @@ export default function ViewPage() {
 
       <div style={card}>
         <h3>支出一覧</h3>
+
         {filteredExpenses.map((e) => (
-          <div key={e.id} 
+          <div
+            key={e.id}
             style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "8px 0",
-            borderBottom: "1px solid #eee"
-            }}>
-
-            <div>
-              <div>{e.amount}円 [{e.category}]</div>
-              <div style={{ fontSize: "12px", color: "#666" }}>
-                {e.memo}
-              </div>
-            </div>
-
+              borderBottom: "1px solid #eee",
+              padding: "10px 0"
+            }}
+          >
+            {/* 上段：支出情報＋ボタン */}
             <div
-              key={e.id}
               style={{
-                borderBottom: "1px solid #eee",
-                padding: "10px 0"
-              }}
-            >
+                display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}
+    >
+      {/* 左：支出情報 */}
+      <div>
+        <div>{e.amount}円 [{e.category}]</div>
+        <div style={{ fontSize: "12px", color: "#666" }}>
+          {e.memo}
+        </div>
+      </div>
 
-              {/* 上段：支出情報＋ボタン */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}
-              >
-                {/* 左：支出情報 */}
-                <div>
-                  <div>{e.amount}円 [{e.category}]</div>
-                  <div style={{ fontSize: "12px", color: "#666" }}>
-                    {e.memo}
-                  </div>
-                </div>
+      {/* 右：ボタン */}
+      <div style={{ display: "flex", gap: "8px" }}>
+        <button
+          style={editButton}
+          onClick={() => {
+            setEditingId(e.id)
+            setEditAmount(String(e.amount))
+            setEditMemo(e.memo || "")
+          }}
+        >
+          編集
+        </button>
 
-                {/* 右：ボタン */}
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <button
-                    style={editButton}
-                    onClick={() => {
-                      setEditingId(e.id)
-                      setEditAmount(String(e.amount))
-                      setEditMemo(e.memo || "")
-                    }}
-                  >
-                    編集
-                  </button>
+        <button
+          style={deleteButton}
+          onClick={() => deleteExpense(e.id)}
+        >
+          削除
+        </button>
+      </div>
+    </div>
 
-                  <button
-                    style={deleteButton}
-                    onClick={() => deleteExpense(e.id)}
-                  >
-                    削除
-                  </button>
-                </div>
-              </div>
+    {/* 下段：編集フォーム */}
+    {editingId === e.id && (
+      <div style={{ marginTop: "8px" }}>
+        <input
+          style={input}
+          type="number"
+          value={editAmount}
+          onChange={(ev) => setEditAmount(ev.target.value)}
+        />
 
-              {/* 下段：編集フォーム */}
-              {editingId === e.id && (
-                <div style={{ marginTop: "8px" }}>
-                  <input
-                    style={input}
-                    type="number"
-                    value={editAmount}
-                    onChange={(ev) => setEditAmount(ev.target.value)}
-                  />
+        <input
+          style={input}
+          type="text"
+          value={editMemo}
+          onChange={(ev) => setEditMemo(ev.target.value)}
+        />
 
-                  <input
-                    style={input}
-                    type="text"
-                    value={editMemo}
-                    onChange={(ev) => setEditMemo(ev.target.value)}
-                  />
-
-                  <button
-                    style={buttonStyle}
-                    onClick={() => updateExpense(e.id)}
-                  >
-                    保存
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
+        <button
+          style={buttonStyle}
+          onClick={() => updateExpense(e.id)}
+        >
+          保存
+        </button>
+      </div>
+    )}
+  </div>
+))}
       </div>
     </div>
   )

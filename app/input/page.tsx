@@ -228,7 +228,7 @@ export default function InputPage() {
           onChange={(e) => setFixedCategory(e.target.value)}
         />
 
-        <button style={buttonStyle} onClick={addFixedCost}>
+        <button style={primaryButton} onClick={addFixedCost}>
           固定費を追加
         </button>
       </div>
