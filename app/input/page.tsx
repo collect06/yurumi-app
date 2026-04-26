@@ -18,6 +18,7 @@ export default function InputPage() {
   const [fixedName, setFixedName] = useState("")
   const [fixedAmount, setFixedAmount] = useState("")
   const [fixedCategory, setFixedCategory] = useState("固定費")
+  const [fixedCosts, setFixedCosts] = useState<any[]>([])
 
   const categories = ["コンビニ", "たばこ", "外食", "デート", "charge spot", "衝動買い", "その他"]
 
@@ -32,6 +33,9 @@ export default function InputPage() {
 
     if (data) setBudget(String(data.amount))
     else setBudget("")
+
+    fetchBudget()
+    fetchFixedCosts()
   }
 
   const insertFixedCosts = async () => {
@@ -99,9 +103,26 @@ export default function InputPage() {
       }
     ])
 
-  setFixedName("")
-  setFixedAmount("")
-}
+    alert("固定費を追加しました")
+    setFixedName("")
+    setFixedAmount("")
+    fetchFixedCosts()
+  }
+
+  const deleteFixedCost = async (id: number) => {
+    await supabase.from("fixed_costs").delete().eq("id", id)
+
+    alert("固定費を削除しました")
+    fetchFixedCosts()
+  }
+
+  const fetchFixedCosts = async () => {
+    const { data } = await supabase
+      .from("fixed_costs")
+      .select("*")
+
+    if (data) setFixedCosts(data)
+  }
 
   return (
     <div style={container}>
@@ -183,6 +204,7 @@ export default function InputPage() {
       <h3>固定費登録</h3>
 
       <input
+        style={inputStyle}
         type="text"
         placeholder="名前（例：家賃）"
         value={fixedName}
@@ -190,6 +212,7 @@ export default function InputPage() {
       />
 
       <input
+        style={inputStyle}
         type="number"
         placeholder="金額"
         value={fixedAmount}
@@ -197,19 +220,57 @@ export default function InputPage() {
       />
 
       <input
+        style={inputStyle}
         type="text"
         placeholder="カテゴリ"
         value={fixedCategory}
         onChange={(e) => setFixedCategory(e.target.value)}
       />
 
-      <button onClick={addFixedCost}>固定費を追加</button>
+      <button style={buttonStyle} onClick={addFixedCost}>
+        固定費を追加
+      </button>
+
+      <div style={{ border: "1px solid #ddd", padding: "8px", marginTop: "10px" }}>
+        <h4>登録済み固定費</h4>
+
+        {fixedCosts.map((f) => (
+          <div key={f.id} style={{ display: "flex", justifyContent: "space-between" }}>
+            <span>{f.name} {f.amount}円</span>
+
+            <button
+              style={{ background: "red", color: "white", borderRadius: "6px" }}
+              onClick={() => deleteFixedCost(f.id)}
+            >
+              削除
+            </button>
+          </div>
+        ))}
+      </div>
 
     </div>
   )
 }
 
 /* ===== スタイル ===== */
+
+const inputStyle = {
+  padding: "8px",
+  borderRadius: "6px",
+  border: "1px solid #ccc",
+  marginBottom: "8px",
+  width: "100%"
+}
+
+const buttonStyle = {
+  padding: "8px",
+  borderRadius: "6px",
+  border: "none",
+  background: "#22c55e",
+  color: "white",
+  width: "100%",
+  cursor: "pointer"
+}
 
 const container = {
   maxWidth: 500,

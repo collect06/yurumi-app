@@ -18,6 +18,9 @@ export default function ViewPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editAmount, setEditAmount] = useState("")
   const [editMemo, setEditMemo] = useState("")
+  const [filterCategory, setFilterCategory] = useState("all")
+  const [showWasteOnly, setShowWasteOnly] = useState(false)
+  const [sortOrder, setSortOrder] = useState("desc")
 
   useEffect(() => {
     const init = async () => {
@@ -105,6 +108,16 @@ export default function ViewPage() {
     }
   }
 
+  const filteredExpenses = expenses
+    .filter((e) => {
+      if (showWasteOnly && !e.is_waste) return false
+      if (filterCategory !== "all" && e.category !== filterCategory) return false
+      return true
+    })
+    .sort((a, b) => {
+      return sortOrder === "desc" ? b.id - a.id : a.id - b.id
+    })
+
   return (
     <div style={container}>
       <header style={header}>
@@ -149,9 +162,31 @@ export default function ViewPage() {
         </PieChart>
       </div>
 
+      <select onChange={(e) => setFilterCategory(e.target.value)}>
+        <option value="all">すべて</option>
+        <option value="コンビニ">コンビニ</option>
+        <option value="外食">外食</option>
+        <option value="たばこ">たばこ</option>
+        <option value="固定費">固定費</option>
+      </select>
+
+      <label>
+        <input
+          type="checkbox"
+          checked={showWasteOnly}
+          onChange={(e) => setShowWasteOnly(e.target.checked)}
+        />
+        無駄支出のみ
+      </label>
+
+      <select onChange={(e) => setSortOrder(e.target.value)}>
+        <option value="desc">新しい順</option>
+        <option value="asc">古い順</option>
+      </select>
+
       <div style={card}>
         <h3>支出一覧</h3>
-        {expenses.map((e) => (
+        {filteredExpenses.map((e) => (
           <div key={e.id} style={listItem}>
             <div>
               {e.amount}円 [{e.category}]
@@ -160,7 +195,7 @@ export default function ViewPage() {
             </div>
 
             <button 
-              style={deleteButton}
+              style={editButton}
               onClick={() => {
                 setEditingId(e.id)
                 setEditAmount(String(e.amount))
