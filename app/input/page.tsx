@@ -201,45 +201,55 @@ export default function InputPage() {
         </button>
       </div>
 
-      <h3>固定費登録</h3>
+      <div style={cardStyle}>
+        <h3>📌 固定費登録</h3>
 
-      <input
-        style={inputStyle}
-        type="text"
-        placeholder="名前（例：家賃）"
-        value={fixedName}
-        onChange={(e) => setFixedName(e.target.value)}
-      />
+        <input
+          style={inputStyle}
+          type="text"
+          placeholder="名前（例：家賃）"
+          value={fixedName}
+          onChange={(e) => setFixedName(e.target.value)}
+        />
 
-      <input
-        style={inputStyle}
-        type="number"
-        placeholder="金額"
-        value={fixedAmount}
-        onChange={(e) => setFixedAmount(e.target.value)}
-      />
+        <input
+          style={inputStyle}
+          type="number"
+          placeholder="金額"
+          value={fixedAmount}
+          onChange={(e) => setFixedAmount(e.target.value)}
+        />
 
-      <input
-        style={inputStyle}
-        type="text"
-        placeholder="カテゴリ"
-        value={fixedCategory}
-        onChange={(e) => setFixedCategory(e.target.value)}
-      />
+        <input
+          style={inputStyle}
+          type="text"
+          placeholder="カテゴリ"
+          value={fixedCategory}
+          onChange={(e) => setFixedCategory(e.target.value)}
+        />
 
-      <button style={buttonStyle} onClick={addFixedCost}>
-        固定費を追加
-      </button>
+        <button style={buttonStyle} onClick={addFixedCost}>
+          固定費を追加
+        </button>
+      </div>
 
-      <div style={{ border: "1px solid #ddd", padding: "8px", marginTop: "10px" }}>
+      <div style={cardStyle}>
         <h4>登録済み固定費</h4>
 
         {fixedCosts.map((f) => (
-          <div key={f.id} style={{ display: "flex", justifyContent: "space-between" }}>
+          <div
+            key={f.id}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "8px"
+            }}
+          >
             <span>{f.name} {f.amount}円</span>
 
             <button
-              style={{ background: "red", color: "white", borderRadius: "6px" }}
+              style={deleteButtonStyle}
               onClick={() => deleteFixedCost(f.id)}
             >
               削除
@@ -311,4 +321,28 @@ const primaryButton = {
   color: "white",
   fontWeight: "bold",
   cursor: "pointer",
+}
+
+const cardStyle = {
+  background: "white",
+  padding: "16px",
+  borderRadius: "12px",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+  marginBottom: "16px"
+}
+
+const editButtonStyle = {
+  background: "#3b82f6",
+  color: "white",
+  padding: "6px 12px",
+  borderRadius: "8px",
+  border: "none"
+}
+
+const deleteButtonStyle = {
+  background: "#ef4444",
+  color: "white",
+  padding: "6px 12px",
+  borderRadius: "8px",
+  border: "none"
 }
