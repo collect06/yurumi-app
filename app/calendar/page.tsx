@@ -26,7 +26,7 @@ export default function CalendarPage() {
   const dailyTotals: { [key: string]: number } = {}
 
   expenses.forEach((e) => {
-    if (e.is_fixed) return
+    //if (e.is_fixed) return
     if (!e.date) return
 
     if (!dailyTotals[e.date]) {

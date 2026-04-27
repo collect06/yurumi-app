@@ -25,7 +25,7 @@ export default function InputPage() {
   )
 
   // 予算取得
-  useEffect(() => {
+useEffect(() => {
   const fetchBudget = async () => {
     const { data } = await supabase
       .from("budgets")
@@ -35,9 +35,6 @@ export default function InputPage() {
 
     if (data) setBudget(String(data.amount))
     else setBudget("")
-
-    fetchBudget()
-    fetchFixedCosts()
   }
 
   const insertFixedCosts = async () => {
@@ -53,16 +50,17 @@ export default function InputPage() {
       if (!existing || existing.length === 0) {
         await supabase.from("expenses").insert({
           amount: f.amount,
-          category: f.category,
           memo: f.name,
           month,
-          is_waste: false
+          is_waste: false,
+          is_fixed: true
         })
       }
     }
   }
 
   fetchBudget()
+  fetchFixedCosts()
   insertFixedCosts()
 
 }, [month])
@@ -130,7 +128,6 @@ export default function InputPage() {
     <div style={container}>
       <header style={header}>
         <h2>支出入力</h2>
-        <Link href="/view">閲覧へ</Link>
       </header>
 
       {/* 月選択 */}
