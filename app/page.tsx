@@ -56,7 +56,7 @@ const tabBarStyle = {
   display: "flex",
   justifyContent: "space-around",
   alignItems: "center",
-  zIndex: 100,
+  zIndex: 9999,
   cursor: "pointer"
 }
 
