@@ -9,7 +9,7 @@ export default function Home() {
   const [tab, setTab] = useState("input")
 
   return (
-    <div style={{ paddingBottom: "70px" }}>
+    <div style={{ paddingBottom: "70px", background: "red" }}>
       {/* メイン表示 */}
       {tab === "input" && <InputPage />}
       {tab === "view" && <ViewPage />}
@@ -27,7 +27,9 @@ export default function Home() {
 
         <button
           style={tab === "view" ? activeTab : tabButton}
-          onClick={() => setTab("view")}
+          onClick={() => {
+            console.log("押された")
+            setTab("view")}}
         >
           📋
           <div style={label}>閲覧</div>
@@ -40,6 +42,7 @@ export default function Home() {
           📅
           <div style={label}>カレンダー</div>
         </button>
+        
       </div>
     </div>
   )
