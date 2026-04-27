@@ -1,6 +1,6 @@
 {
-  "name": "My Kakeibo",
-  "short_name": "Kakeibo",
+  "name": "ゆるみ家計簿",
+  "short_name": "ゆるログ",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
