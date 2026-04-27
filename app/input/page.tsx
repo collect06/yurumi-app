@@ -17,10 +17,12 @@ export default function InputPage() {
   const [isWaste, setIsWaste] = useState(false)
   const [fixedName, setFixedName] = useState("")
   const [fixedAmount, setFixedAmount] = useState("")
-  const [fixedCategory, setFixedCategory] = useState("固定費")
   const [fixedCosts, setFixedCosts] = useState<any[]>([])
 
   const categories = ["コンビニ", "たばこ", "外食", "デート", "charge spot", "衝動買い", "その他"]
+  const [date, setDate] = useState(
+    new Date().toISOString().split("T")[0]
+  )
 
   // 予算取得
   useEffect(() => {
@@ -84,7 +86,8 @@ export default function InputPage() {
         memo,
         category,
         month,
-        is_waste: isWaste
+        is_waste: isWaste,
+        date
       },
     ])
 
@@ -98,8 +101,7 @@ export default function InputPage() {
     await supabase.from("fixed_costs").insert([
       {
         name: fixedName,
-        amount: Number(fixedAmount),
-        category: fixedCategory
+        amount: Number(fixedAmount)
       }
     ])
 
@@ -189,6 +191,13 @@ export default function InputPage() {
         </select>
 
         <input
+          style={inputStyle}
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+
+        <input
           type="text"
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
@@ -218,14 +227,6 @@ export default function InputPage() {
           placeholder="金額"
           value={fixedAmount}
           onChange={(e) => setFixedAmount(e.target.value)}
-        />
-
-        <input
-          style={inputStyle}
-          type="text"
-          placeholder="カテゴリ"
-          value={fixedCategory}
-          onChange={(e) => setFixedCategory(e.target.value)}
         />
 
         <button style={primaryButton} onClick={addFixedCost}>

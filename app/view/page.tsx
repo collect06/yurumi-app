@@ -49,6 +49,9 @@ export default function ViewPage() {
     else setBudget(0)
   }
 
+  const normalExpenses = expenses.filter(e => !e.is_fixed)
+  const fixedExpenses = expenses.filter(e => e.is_fixed)
+
   const updateExpense = async (id: number) => {
     await supabase
       .from("expenses")
@@ -162,6 +165,23 @@ export default function ViewPage() {
         </PieChart>
       </div>
 
+      <h3>固定費</h3>
+
+      {fixedExpenses.map((e) => (
+        <div
+          key={e.id}
+          style={{
+            borderBottom: "1px solid #eee",
+            padding: "10px 0"
+          }}
+        >
+          <div>{e.amount}円 [{e.category}]</div>
+          <div style={{ fontSize: "12px", color: "#666" }}>
+            {e.memo}
+          </div>
+        </div>
+      ))}
+
       <select onChange={(e) => setFilterCategory(e.target.value)}>
         <option value="all">すべて</option>
         <option value="コンビニ">コンビニ</option>
@@ -187,7 +207,7 @@ export default function ViewPage() {
       <div style={card}>
         <h3>支出一覧</h3>
 
-        {filteredExpenses.map((e) => (
+        {normalExpenses.map((e) => (
           <div
             key={e.id}
             style={{
