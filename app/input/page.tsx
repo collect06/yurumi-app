@@ -284,6 +284,7 @@ const container = {
   maxWidth: 500,
   margin: "0 auto",
   padding: 20,
+  paddingBottom: "100px"
 }
 
 const header = {
