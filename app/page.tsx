@@ -9,7 +9,7 @@ export default function Home() {
   const [tab, setTab] = useState("input")
 
   return (
-    <div style={{ paddingBottom: "70px", background: "red" }}>
+    <div style={{ paddingBottom: "70px"}}>
       {/* メイン表示 */}
       {tab === "input" && <InputPage />}
       {tab === "view" && <ViewPage />}
@@ -27,9 +27,7 @@ export default function Home() {
 
         <button
           style={tab === "view" ? activeTab : tabButton}
-          onClick={() => {
-            console.log("押された")
-            setTab("view")}}
+          onClick={() => setTab("view")}
         >
           📋
           <div style={label}>閲覧</div>
@@ -59,7 +57,7 @@ const tabBarStyle = {
   display: "flex",
   justifyContent: "space-around",
   alignItems: "center",
-  zIndex: 9999,
+  zIndex: 10,
   cursor: "pointer"
 }
 
