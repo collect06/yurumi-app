@@ -31,7 +31,7 @@ export default function Home() {
           onClick={() => setTab("view")}
         >
           📋
-          <div style={label}>閲覧</div>
+          <div style={label}>確認</div>
         </button>
 
         <button

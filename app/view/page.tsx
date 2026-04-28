@@ -122,10 +122,7 @@ export default function ViewPage() {
 
   return (
     <div style={container}>
-      <header style={header}>
-        <h2>閲覧</h2>
-      </header>
-
+     
       <div style={card}>
         <input
           type="month"

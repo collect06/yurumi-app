@@ -127,9 +127,6 @@ useEffect(() => {
 
   return (
     <div style={container}>
-      <header style={header}>
-        <h2>支出入力</h2>
-      </header>
 
       {/* 月選択 */}
       <div style={card}>
