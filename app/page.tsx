@@ -52,7 +52,7 @@ const tabBarStyle : CSSProperties = {
   bottom: 0,
   left: 0,
   right: 0,
-  height: "100px",
+  height: "90px",
   paddingBottom: "env(safe-area-inset-bottom)",
   background: "white",
   borderTop: "1px solid #ddd",
@@ -67,7 +67,7 @@ const tabButton = {
   flex: 1,
   background: "none",
   border: "none",
-  fontSize: "22px",
+  fontSize: "24px",
   color: "#999",
   display: "flex",
   flexDirection: "column" as const,
@@ -77,6 +77,9 @@ const tabButton = {
 
 const activeTab = {
   ...tabButton,
+  fontSize: "25px",
+  background: "#e0f2fe",
+  borderTop: "3px solid #22c55e",
   color: "#22c55e"
 }
 
