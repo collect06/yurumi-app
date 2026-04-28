@@ -14,6 +14,9 @@ export default function CalendarPage() {
   const [editAmount, setEditAmount] = useState("")
   const [editMemo, setEditMemo] = useState("")
 
+  const [fade, setFade] = useState(true)
+  const [direction, setDirection] = useState(0) // -1 左 / 1 右
+
   useEffect(() => {
     fetchData()
   }, [month])
@@ -29,10 +32,16 @@ export default function CalendarPage() {
 
   // ===== 月操作 =====
   const changeMonth = (diff: number) => {
-    const d = new Date(month + "-01")
-    d.setMonth(d.getMonth() + diff)
-    setMonth(d.toISOString().slice(0, 7))
-    setSelectedDate(null)
+    setDirection(diff)
+    setFade(false)
+
+    setTimeout(() => {
+      const d = new Date(month + "-01")
+      d.setMonth(d.getMonth() + diff)
+      setMonth(d.toISOString().slice(0, 7))
+      setSelectedDate(null)
+      setFade(true)
+    }, 150)
   }
 
   // ===== 日別合計 =====
@@ -54,9 +63,34 @@ export default function CalendarPage() {
 
   const today = new Date().toISOString().slice(0, 10)
 
-  const days = []
-  for (let i = 0; i < firstDay; i++) days.push(null)
-  for (let i = 1; i <= daysInMonth; i++) days.push(i)
+  
+  const weeks: (number | null)[][] = []
+
+  let week: (number | null)[] = []
+
+  // 月初の空白
+  for (let i = 0; i < firstDay; i++) {
+    week.push(null)
+  }
+
+  // 日付を詰める
+  for (let day = 1; day <= daysInMonth; day++) {
+    week.push(day)
+
+    if (week.length === 7) {
+      weeks.push(week)
+      week = []
+    }
+  }
+
+  // 最後の週を埋める
+  if (week.length > 0) {
+    while (week.length < 7) {
+      week.push(null)
+    }
+    weeks.push(week)
+  }
+
 
   const selectedExpenses = expenses.filter(
     (e) => e.date === selectedDate
@@ -79,6 +113,8 @@ export default function CalendarPage() {
     setEditingId(null)
     fetchData()
   }
+
+  
 
   return (
     <div style={{ padding: "16px", paddingBottom: "100px" }}>
@@ -114,48 +150,62 @@ export default function CalendarPage() {
       </div>
 
       {/* ===== カレンダー ===== */}
-      <div style={grid}>
-        {days.map((day, index) => {
-          if (!day) return <div key={index} />
-
-          const dateStr = `${month}-${String(day).padStart(2, "0")}`
-          const isToday = dateStr === today
-
-          const dayOfWeek = index % 7
-
-          return (
-            <div
-              key={day}
-              style={{
-                ...cell,
-                background:
-                  selectedDate === dateStr
-                    ? "#bbf7d0"
-                    : isToday
-                    ? "#e0f2fe"
-                    : "white",
-                color:
-                  dayOfWeek === 0
-                    ? "#ef4444"
-                    : dayOfWeek === 6
-                    ? "#3b82f6"
-                    : "black",
-                transform:
-                  selectedDate === dateStr ? "scale(0.95)" : "scale(1)",
-                transition: "0.15s"
-              }}
-              onClick={() => setSelectedDate(dateStr)}
+      <div
+        style={{
+          ...grid,
+          opacity: fade ? 1 : 0,
+          transform: fade
+            ? "translateX(0)"
+            : direction === 1
+            ? "translateX(30px)"
+            : "translateX(-30px)",
+          transition: "all 0.2s ease"
+        }}
       >
-              <div style={dayNumber}>{day}</div>
+        
+        {weeks.map((week, wIndex) => (
+          <div key={wIndex} style={weekRow}>
+            {week.map((day, dIndex) => {
+              if (!day) return <div key={dIndex} style={emptyCell} />
 
-              <div style={amountText}>
-                {dailyTotals[dateStr]
-                  ? `${dailyTotals[dateStr]}円`
-                  : ""}   
-              </div>
-            </div>
-          )
-        })}
+              const dateStr = `${month}-${String(day).padStart(2, "0")}`
+              const isToday = dateStr === today
+
+              return (
+                <div
+                  key={dIndex}
+                  style={{
+                    ...cell,
+                    background:
+                      selectedDate === dateStr
+                        ? "#bbf7d0"
+                        : isToday
+                        ? "#e0f2fe"
+                        : "white",
+                    color:
+                      dIndex === 0
+                        ? "#ef4444"
+                        : dIndex === 6
+                        ? "#3b82f6"
+                        : "black",
+                    transform:
+                      selectedDate === dateStr ? "scale(0.95)" : "scale(1)",
+                    transition: "0.15s"
+                  }}
+                  onClick={() => setSelectedDate(dateStr)}
+                >
+                  <div style={dayNumber}>{day}</div>
+
+                  <div style={amountText}>
+                    {dailyTotals[dateStr]
+                      ? `${dailyTotals[dateStr]}円`
+                      : ""}
+                  </div>
+                </div>
+              )
+            })}
+         </div>
+        ))}
       </div>
 
       {/* ===== 詳細 ===== */}
@@ -316,4 +366,14 @@ const input = {
   padding: "6px",
   borderRadius: "6px",
   border: "1px solid #ccc"
+}
+
+const weekRow = {
+  display: "grid",
+  gridTemplateColumns: "repeat(7, 1fr)",
+  gap: "4px"
+}
+
+const emptyCell = {
+  minHeight: "70px"
 }
