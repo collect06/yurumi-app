@@ -4,6 +4,7 @@ import { useState } from "react"
 import InputPage from "./input/page"
 import ViewPage from "./view/page"
 import CalendarPage from "./calendar/page"
+import { CSSProperties } from "react"
 
 export default function Home() {
   const [tab, setTab] = useState("input")
@@ -46,7 +47,7 @@ export default function Home() {
   )
 }
 
-const tabBarStyle = {
+const tabBarStyle : CSSProperties = {
   position: "fixed",
   bottom: 0,
   left: 0,
