@@ -52,7 +52,7 @@ const tabBarStyle : CSSProperties = {
   bottom: 0,
   left: 0,
   right: 0,
-  height: "70px",
+  height: "100px",
   paddingBottom: "env(safe-area-inset-bottom)",
   background: "white",
   borderTop: "1px solid #ddd",
