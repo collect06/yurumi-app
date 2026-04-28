@@ -124,7 +124,6 @@ export default function ViewPage() {
     <div style={container}>
       <header style={header}>
         <h2>閲覧</h2>
-        <Link href="/input">入力へ</Link>
       </header>
 
       <div style={card}>
@@ -136,11 +135,11 @@ export default function ViewPage() {
         />
 
         <div style={{ marginTop: 15 }}>
-          <p>無駄予算: <strong>{budget}円</strong></p>
           <p>総支出: {total}円</p>
-          <p>無駄支出: <strong>{wasteTotal}</strong>円</p>
+          <p>ゆるみ予算: <strong>{budget}円</strong></p>
+          <p>ゆるみ支出: <strong>{wasteTotal}</strong>円</p>
           <p style={{ color: remaining < 0 ? "red" : "green" }}>
-            無駄支出残り: <strong>{remaining}円</strong>
+            ゆるみ支出残り: <strong>{remaining}円</strong>
           </p>
         </div>
       </div>
@@ -169,7 +168,6 @@ export default function ViewPage() {
         <option value="コンビニ">コンビニ</option>
         <option value="外食">外食</option>
         <option value="たばこ">たばこ</option>
-        <option value="固定費">固定費</option>
       </select>
 
       <label>
@@ -205,63 +203,63 @@ export default function ViewPage() {
                 alignItems: "center"
               }}
             >
-      {/* 左：支出情報 */}
-      <div>
-        <div>{e.amount}円 [{e.category}]</div>
-        <div style={{ fontSize: "12px", color: "#666" }}>
-          {e.memo}
+            {/* 左：支出情報 */}
+            <div>
+              <div>{e.amount}円 [{e.category}]</div>
+              <div style={{ fontSize: "12px", color: "#666" }}>
+                {e.memo}
+              </div>
+            </div>
+
+            {/* 右：ボタン */}
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button
+                style={editButton}
+                onClick={() => {
+                  setEditingId(e.id)
+                  setEditAmount(String(e.amount))
+                  setEditMemo(e.memo || "")
+                }}
+              >
+                編集
+              </button>
+
+              <button
+                style={deleteButton}
+                onClick={() => deleteExpense(e.id)}
+              >
+                削除
+              </button>
+            </div>
+          </div>
+
+          {/* 下段：編集フォーム */}
+          {editingId === e.id && (
+            <div style={{ marginTop: "8px" }}>
+              <input
+                style={input}
+                type="number"
+                value={editAmount}
+                onChange={(ev) => setEditAmount(ev.target.value)}
+              />
+
+              <input
+                style={input}
+                type="text"
+                value={editMemo}
+                onChange={(ev) => setEditMemo(ev.target.value)}
+              />
+
+              <button
+                style={buttonStyle}
+                onClick={() => updateExpense(e.id)}
+              >
+                保存
+              </button>
+            </div>
+          )}
         </div>
-      </div>
-
-      {/* 右：ボタン */}
-      <div style={{ display: "flex", gap: "8px" }}>
-        <button
-          style={editButton}
-          onClick={() => {
-            setEditingId(e.id)
-            setEditAmount(String(e.amount))
-            setEditMemo(e.memo || "")
-          }}
-        >
-          編集
-        </button>
-
-        <button
-          style={deleteButton}
-          onClick={() => deleteExpense(e.id)}
-        >
-          削除
-        </button>
-      </div>
-    </div>
-
-    {/* 下段：編集フォーム */}
-    {editingId === e.id && (
-      <div style={{ marginTop: "8px" }}>
-        <input
-          style={input}
-          type="number"
-          value={editAmount}
-          onChange={(ev) => setEditAmount(ev.target.value)}
-        />
-
-        <input
-          style={input}
-          type="text"
-          value={editMemo}
-          onChange={(ev) => setEditMemo(ev.target.value)}
-        />
-
-        <button
-          style={buttonStyle}
-          onClick={() => updateExpense(e.id)}
-        >
-          保存
-        </button>
-      </div>
-    )}
-  </div>
-))}
+      ))}
       </div>
     </div>
   )
