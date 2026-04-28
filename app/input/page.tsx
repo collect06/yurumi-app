@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
 import Link from "next/link"
+import { CSSProperties } from "react"
 
 export default function InputPage() {
   const now = new Date()
@@ -262,7 +263,7 @@ useEffect(() => {
 
 /* ===== スタイル ===== */
 
-const inputStyle = {
+const inputStyle : CSSProperties = {
   padding: "8px",
   borderRadius: "6px",
   border: "1px solid #ccc",
