@@ -9,7 +9,7 @@ export default function Home() {
   const [tab, setTab] = useState("input")
 
   return (
-    <div style={{ paddingBottom: "70px"}}>
+    <div style={{ paddingBottom: "100px"}}>
       {/* メイン表示 */}
       {tab === "input" && <InputPage />}
       {tab === "view" && <ViewPage />}
@@ -47,28 +47,31 @@ export default function Home() {
 }
 
 const tabBarStyle = {
-  position: "fixed" as const,
+  position: "fixed",
   bottom: 0,
   left: 0,
   right: 0,
-  height: "60px",
+  height: "70px",
+  paddingBottom: "env(safe-area-inset-bottom)",
   background: "white",
   borderTop: "1px solid #ddd",
   display: "flex",
   justifyContent: "space-around",
   alignItems: "center",
-  zIndex: 10,
-  cursor: "pointer"
+  zIndex: 100,
+  cursor: pointer
 }
 
 const tabButton = {
+  flex: 1,
   background: "none",
   border: "none",
   fontSize: "22px",
   color: "#999",
   display: "flex",
   flexDirection: "column" as const,
-  alignItems: "center"
+  alignItems: "center",
+  justifyContent: "center"
 }
 
 const activeTab = {
