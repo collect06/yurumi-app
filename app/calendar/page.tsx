@@ -15,7 +15,7 @@ export default function CalendarPage() {
   const [editMemo, setEditMemo] = useState("")
 
   const [fade, setFade] = useState(true)
-  const [direction, setDirection] = useState(0) // -1 左 / 1 右
+  const [direction, setDirection] = useState(0)
 
   useEffect(() => {
     fetchData()
@@ -30,7 +30,7 @@ export default function CalendarPage() {
     if (data) setExpenses(data)
   }
 
-  // ===== 月操作 =====
+  // ===== 月移動 =====
   const changeMonth = (diff: number) => {
     setDirection(diff)
     setFade(false)
@@ -60,22 +60,18 @@ export default function CalendarPage() {
 
   const firstDay = new Date(year, monthNum - 1, 1).getDay()
   const daysInMonth = new Date(year, monthNum, 0).getDate()
-
   const today = new Date().toISOString().slice(0, 10)
 
-  
+  // ===== 週配列生成（ここが最重要） =====
   const weeks: (number | null)[][] = []
-
   let week: (number | null)[] = []
 
-  // 月初の空白
   for (let i = 0; i < firstDay; i++) {
     week.push(null)
   }
 
-  // 日付を詰める
-  for (let day = 1; day <= daysInMonth; day++) {
-    week.push(day)
+  for (let d = 1; d <= daysInMonth; d++) {
+    week.push(d)
 
     if (week.length === 7) {
       weeks.push(week)
@@ -83,14 +79,12 @@ export default function CalendarPage() {
     }
   }
 
-  // 最後の週を埋める
   if (week.length > 0) {
     while (week.length < 7) {
       week.push(null)
     }
     weeks.push(week)
   }
-
 
   const selectedExpenses = expenses.filter(
     (e) => e.date === selectedDate
@@ -114,11 +108,9 @@ export default function CalendarPage() {
     fetchData()
   }
 
-  
-
   return (
     <div style={{ padding: "16px", paddingBottom: "100px" }}>
-
+      
       {/* ===== 月ヘッダー ===== */}
       <div style={monthHeader}>
         <button onClick={() => changeMonth(-1)}>←</button>
@@ -152,7 +144,6 @@ export default function CalendarPage() {
       {/* ===== カレンダー ===== */}
       <div
         style={{
-          ...grid,
           opacity: fade ? 1 : 0,
           transform: fade
             ? "translateX(0)"
@@ -162,7 +153,6 @@ export default function CalendarPage() {
           transition: "all 0.2s ease"
         }}
       >
-        
         {weeks.map((week, wIndex) => (
           <div key={wIndex} style={weekRow}>
             {week.map((day, dIndex) => {
@@ -182,19 +172,25 @@ export default function CalendarPage() {
                         : isToday
                         ? "#e0f2fe"
                         : "white",
-                    color:
-                      dIndex === 0
-                        ? "#ef4444"
-                        : dIndex === 6
-                        ? "#3b82f6"
-                        : "black",
                     transform:
                       selectedDate === dateStr ? "scale(0.95)" : "scale(1)",
                     transition: "0.15s"
                   }}
                   onClick={() => setSelectedDate(dateStr)}
                 >
-                  <div style={dayNumber}>{day}</div>
+                  <div
+                    style={{
+                      ...dayNumber,
+                      color:
+                        dIndex === 0
+                          ? "#ef4444"
+                          : dIndex === 6
+                          ? "#3b82f6"
+                          : "black"
+                    }}
+                  >
+                    {day}
+                  </div>
 
                   <div style={amountText}>
                     {dailyTotals[dateStr]
@@ -204,7 +200,7 @@ export default function CalendarPage() {
                 </div>
               )
             })}
-         </div>
+          </div>
         ))}
       </div>
 
@@ -218,7 +214,7 @@ export default function CalendarPage() {
           {selectedExpenses.map((e) => (
             <div key={e.id} style={expenseRow}>
               <div>
-                <div>{e.amount}円 [{e.category}]</div>
+                <div>{e.amount}円</div>
                 <div style={{ fontSize: "12px", color: "#666" }}>
                   {e.memo}
                 </div>
@@ -244,20 +240,19 @@ export default function CalendarPage() {
                 </button>
               </div>
 
-              {/* 編集フォーム */}
               {editingId === e.id && (
                 <div style={{ marginTop: "8px" }}>
                   <input
                     style={input}
                     type="number"
                     value={editAmount}
-                    onChange={(ev) => setEditAmount(ev.target.value)}
+                    onChange={(e) => setEditAmount(e.target.value)}
                   />
                   <input
                     style={input}
                     type="text"
                     value={editMemo}
-                    onChange={(ev) => setEditMemo(ev.target.value)}
+                    onChange={(e) => setEditMemo(e.target.value)}
                   />
                   <button
                     style={saveBtn}
@@ -300,22 +295,28 @@ const weekDay = {
   fontSize: "12px"
 }
 
-const grid = {
+const weekRow = {
   display: "grid",
   gridTemplateColumns: "repeat(7, 1fr)",
-  gap: "4px"
+  gap: "4px",
+  marginBottom: "4px"
+}
+
+const emptyCell = {
+  minHeight: "70px"
 }
 
 const cell = {
   minHeight: "70px",
-  borderRadius: "8px",
-  padding: "4px",
+  borderRadius: "10px",
+  padding: "6px",
   border: "1px solid #ddd",
   cursor: "pointer"
 }
 
 const dayNumber = {
-  fontSize: "12px"
+  fontSize: "12px",
+  fontWeight: "bold"
 }
 
 const amountText = {
@@ -366,14 +367,4 @@ const input = {
   padding: "6px",
   borderRadius: "6px",
   border: "1px solid #ccc"
-}
-
-const weekRow = {
-  display: "grid",
-  gridTemplateColumns: "repeat(7, 1fr)",
-  gap: "4px"
-}
-
-const emptyCell = {
-  minHeight: "70px"
 }
