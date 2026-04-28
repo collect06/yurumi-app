@@ -267,7 +267,9 @@ const inputStyle = {
   borderRadius: "6px",
   border: "1px solid #ccc",
   marginBottom: "8px",
-  width: "100%"
+  width: "100%",
+  appearance: "none",
+  WebkitAppearance: "none"
 }
 
 const buttonStyle = {
