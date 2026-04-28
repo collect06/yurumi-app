@@ -17,6 +17,8 @@ export default function CalendarPage() {
   const [fade, setFade] = useState(true)
   const [direction, setDirection] = useState(0)
 
+  const [budget, setBudget] = useState(0)
+
   useEffect(() => {
     fetchData()
   }, [month])
@@ -28,6 +30,18 @@ export default function CalendarPage() {
       .eq("month", month)
 
     if (data) setExpenses(data)
+    
+    const { data: budgetData } = await supabase
+      .from("budgets")
+      .select("*")
+      .eq("month", month)
+      .single()
+
+    if (budgetData) {
+      setBudget(budgetData.amount)
+    } else {
+      setBudget(0)
+    }
   }
 
   // ===== 月移動 =====
@@ -108,11 +122,35 @@ export default function CalendarPage() {
     fetchData()
   }
 
+  // 月合計
+  const total = expenses.reduce((sum, e) => {
+    if (e.is_fixed) return sum
+    return sum + e.amount
+  }, 0)
+
   return (
     <div style={{ padding: "16px", paddingBottom: "100px" }}>
       
       {/* ===== 月ヘッダー ===== */}
       <div style={monthHeader}>
+
+        <div style={budgetBox}>
+          <div style={budgetText}>
+            {total} / {budget}円
+          </div>
+
+          <div style={budgetBarBg}>
+            <div
+              style={{
+                ...budgetBar,
+                width: `${budget ? Math.min((total / budget) * 100, 100) : 0}%`,
+                background:
+                  total > budget ? "#ef4444" : "#22c55e"
+              }}
+            />
+          </div>
+        </div>
+
         <button onClick={() => changeMonth(-1)}>←</button>
 
         <input
@@ -148,8 +186,8 @@ export default function CalendarPage() {
           transform: fade
             ? "translateX(0)"
             : direction === 1
-            ? "translateX(30px)"
-            : "translateX(-30px)",
+            ? "translateX(-30px)"
+            : "translateX(30px)",
           transition: "all 0.2s ease"
         }}
       >
@@ -367,4 +405,26 @@ const input = {
   padding: "6px",
   borderRadius: "6px",
   border: "1px solid #ccc"
+}
+
+const budgetBox = {
+  marginBottom: "10px"
+}
+
+const budgetText = {
+  fontSize: "12px",
+  marginBottom: "4px"
+}
+
+const budgetBarBg = {
+  width: "100%",
+  height: "8px",
+  background: "#eee",
+  borderRadius: "999px"
+}
+
+const budgetBar = {
+  height: "8px",
+  borderRadius: "999px",
+  transition: "0.3s"
 }
