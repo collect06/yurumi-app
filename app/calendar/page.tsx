@@ -121,7 +121,8 @@ export default function CalendarPage() {
           const dateStr = `${month}-${String(day).padStart(2, "0")}`
           const isToday = dateStr === today
 
-          const weekIndex = (index % 7)
+          const dateObj = new Date(year, monthNum - 1, day)
+          const dayOfWeek = dateObj.getDay()
 
           return (
             <div
@@ -134,21 +135,33 @@ export default function CalendarPage() {
                     : isToday
                     ? "#e0f2fe"
                     : "white",
-                color:
-                  weekIndex === 0
-                    ? "#ef4444"
-                    : weekIndex === 6
-                    ? "#3b82f6"
-                    : "black",
                 transform:
                   selectedDate === dateStr ? "scale(0.95)" : "scale(1)",
                 transition: "0.15s"
               }}
               onClick={() => setSelectedDate(dateStr)}
             >
-              <div style={dayNumber}>{day}</div>
+              {/* 日付（ここだけ色付け） */}
+              <div
+                style={{
+                  fontSize: "12px",
+                  color:
+                    dayOfWeek === 0
+                      ? "#ef4444"
+                      : dayOfWeek === 6
+                      ? "#3b82f6"
+                      : "black",
+                    fontWeight:
+                      dayOfWeek === 0 || dayOfWeek === 6
+                      ? "bold"
+                      : "normal"
+                }}
+              >
+                {day}
+              </div>
 
-              <div style={amountText}>
+              {/* 金額（色つけない） */}
+              <div style={{ fontSize: "12px", marginTop: "4px" }}>
                 {dailyTotals[dateStr]
                   ? `${dailyTotals[dateStr]}円`
                   : ""}
