@@ -60,7 +60,7 @@ const tabBarStyle : CSSProperties = {
   justifyContent: "space-around",
   alignItems: "center",
   zIndex: 100,
-  cursor: pointer
+  cursor: "pointer"
 }
 
 const tabButton = {
