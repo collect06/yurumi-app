@@ -134,7 +134,19 @@ export default function CalendarPage() {
       {/* ===== 月ヘッダー ===== */}
       <div style={monthHeader}>
 
-        <div style={budgetBox}>
+        <button onClick={() => changeMonth(-1)}>←</button>
+
+        <input
+          type="month"
+          value={month}
+          onChange={(e) => setMonth(e.target.value)}
+          style={monthInput}
+        />
+
+        <button onClick={() => changeMonth(1)}>→</button>
+      </div>
+
+      <div style={budgetBox}>
           <div style={budgetText}>
             {total} / {budget}円
           </div>
@@ -150,18 +162,6 @@ export default function CalendarPage() {
             />
           </div>
         </div>
-
-        <button onClick={() => changeMonth(-1)}>←</button>
-
-        <input
-          type="month"
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
-          style={monthInput}
-        />
-
-        <button onClick={() => changeMonth(1)}>→</button>
-      </div>
 
       {/* ===== 曜日 ===== */}
       <div style={weekHeader}>
@@ -408,7 +408,8 @@ const input = {
 }
 
 const budgetBox = {
-  marginBottom: "10px"
+  marginTop: "10px",
+  marginBottom: "12px"
 }
 
 const budgetText = {
@@ -420,11 +421,12 @@ const budgetBarBg = {
   width: "100%",
   height: "8px",
   background: "#eee",
-  borderRadius: "999px"
+  borderRadius: "6px",
+  overflow: "hidden"
 }
 
 const budgetBar = {
-  height: "8px",
-  borderRadius: "999px",
-  transition: "0.3s"
+  height: "100%",
+  background: "#22c55e",
+  transition: "width 0.3s ease"
 }
