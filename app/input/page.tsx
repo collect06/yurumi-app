@@ -1,10 +1,11 @@
 "use client"
 import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
-import Link from "next/link"
 import { CSSProperties } from "react"
+import Header from "../components/Header"
 
 export default function InputPage() {
+  
   const now = new Date()
   const defaultMonth = `${now.getFullYear()}-${String(
     now.getMonth() + 1
@@ -20,22 +21,29 @@ export default function InputPage() {
   const [fixedAmount, setFixedAmount] = useState("")
   const [fixedCosts, setFixedCosts] = useState<any[]>([])
 
-  const categories = ["コンビニ", "たばこ", "外食", "デート", "charge spot", "衝動買い", "その他"]
+  const [categories, setCategories] = useState<any[]>([])
   const [date, setDate] = useState(
     new Date().toISOString().split("T")[0]
   )
 
   // 予算取得
-useEffect(() => {
-  const fetchBudget = async () => {
-    const { data } = await supabase
-      .from("budgets")
-      .select("*")
-      .eq("month", month)
-      .single()
+  useEffect(() => {
+    const fetchBudget = async () => {
+      const { data } = await supabase
+        .from("budgets")
+        .select("*")
+        .eq("month", month)
+        .single()
 
-    if (data) setBudget(String(data.amount))
-    else setBudget("")
+      if (data) setBudget(String(data.amount))
+      else setBudget("")
+
+      fetchCategories()
+    }
+
+  const fetchCategories = async () => {
+    const { data } = await supabase.from("categories").select("*")
+    if (data) setCategories(data)
   }
 
   const insertFixedCosts = async () => {
@@ -126,6 +134,9 @@ useEffect(() => {
   }
 
   return (
+    <div>
+      <Header />
+
     <div style={container}>
 
       {/* 月選択 */}
@@ -181,7 +192,9 @@ useEffect(() => {
           style={input}
         >
           {categories.map((c) => (
-            <option key={c}>{c}</option>
+            <option key={c.id} value={c.name}>
+              {c.name}
+            </option>
           ))}
         </select>
 
@@ -254,6 +267,7 @@ useEffect(() => {
         ))}
       </div>
 
+    </div>
     </div>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
+import Header from "../components/Header"
 
 export default function CalendarPage() {
   const [expenses, setExpenses] = useState<any[]>([])
@@ -129,6 +130,8 @@ export default function CalendarPage() {
   }, 0)
 
   return (
+    <div>
+      <Header />
     <div style={{ padding: "16px", paddingBottom: "100px" }}>
       
       {/* ===== 月ヘッダー ===== */}
@@ -304,6 +307,7 @@ export default function CalendarPage() {
           ))}
         </div>
       )}
+    </div>
     </div>
   )
 }

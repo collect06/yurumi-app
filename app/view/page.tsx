@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts"
-import Link from "next/link"
+import Header from "../components/Header"
 
 const COLORS = ["#4CAF50", "#2196F3", "#FF9800", "#E91E63", "#9C27B0"]
 
@@ -22,6 +22,8 @@ export default function ViewPage() {
   const [showWasteOnly, setShowWasteOnly] = useState(false)
   const [sortOrder, setSortOrder] = useState("desc")
 
+  const [categories, setCategories] = useState<any[]>([])
+
   useEffect(() => {
     const init = async () => {
       await insertFixedCosts()
@@ -29,7 +31,13 @@ export default function ViewPage() {
     }
 
     init()
+    fetchCategories()
   }, [month])
+
+  const fetchCategories = async () => {
+    const { data } = await supabase.from("categories").select("*")
+    if (data) setCategories(data)
+  }
 
   const fetchData = async () => {
     const { data } = await supabase
@@ -121,6 +129,8 @@ export default function ViewPage() {
     })
 
   return (
+    <div>
+      <Header />
     <div style={container}>
      
       <div style={card}>
@@ -162,9 +172,11 @@ export default function ViewPage() {
 
       <select onChange={(e) => setFilterCategory(e.target.value)}>
         <option value="all">すべて</option>
-        <option value="コンビニ">コンビニ</option>
-        <option value="外食">外食</option>
-        <option value="たばこ">たばこ</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.name}>
+              {c.name}
+            </option>
+          ))}
       </select>
 
       <label>
@@ -258,6 +270,7 @@ export default function ViewPage() {
         </div>
       ))}
       </div>
+    </div>
     </div>
   )
 }
