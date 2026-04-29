@@ -1,31 +1,43 @@
 "use client"
 
+import { CSSProperties } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 export default function Header() {
-  const router = useRouter()
-
   return (
     <div style={headerStyle}>
-      <div>ゆるみ家計簿</div>
-      <Link href="/settings">
+      <h2 style={{ margin: 0 }}>ゆるみ家計簿</h2>
+
+      <Link href="/settings" style={gearBtn}>
         ⚙️
       </Link>
     </div>
   )
 }
 
-const headerStyle = {
+const headerStyle: CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  marginBottom: "10px"
+  padding: "10px 16px",
+  background: "#4CAF50",
+  color: "white",
+  borderRadius: "0 0 12px 12px",
+  position: "sticky",
+  top: 0,
+  zIndex: 10
 }
 
-const gearBtn = {
-  fontSize: "20px",
-  cursor: "pointer",
-  background: "none",
-  border: "none"
+const gearBtn: CSSProperties = {
+  fontSize: "24px",
+  textDecoration: "none",
+  background: "white",
+  color: "#4CAF50",
+  borderRadius: "50%",
+  width: "40px",
+  height: "40px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
 }

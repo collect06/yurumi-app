@@ -1,5 +1,5 @@
 "use client"
-
+//
 import { useState } from "react"
 import InputPage from "./input/page"
 import ViewPage from "./view/page"

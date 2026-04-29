@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts"
 import Header from "../components/Header"
-
+//
 const COLORS = ["#4CAF50", "#2196F3", "#FF9800", "#E91E63", "#9C27B0"]
 
 export default function ViewPage() {

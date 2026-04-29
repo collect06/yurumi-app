@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
 import { CSSProperties } from "react"
 import Header from "../components/Header"
-
+//
 export default function InputPage() {
   
   const now = new Date()
