@@ -92,7 +92,7 @@ export default function ViewPage() {
 
   const grouped = Object.values(
     expenses.reduce((acc: any, cur) => {
-      const name = cur.category?.name || "不明"
+      const name = cur.category?.name ?? "固定費"
 
       if (!acc[name]) acc[name] = { name, value: 0 }
       acc[name].value += cur.amount
@@ -128,11 +128,16 @@ export default function ViewPage() {
   const filteredExpenses = targetExpenses
     .filter((e) => {
       if (showWasteOnly && !e.is_waste) return false
-      if (filterCategory !== "all" && e.category !== filterCategory) return false
+
+      if (filterCategory === "固定費") {
+        return e.is_fixed
+      }
+
+      if (filterCategory !== "all" && e.category?.name !== filterCategory) {
+        return false
+      }
+
       return true
-    })
-    .sort((a, b) => {
-      return sortOrder === "desc" ? b.id - a.id : a.id - b.id
     })
 
   return (
@@ -181,6 +186,7 @@ export default function ViewPage() {
 
       <select onChange={(e) => setFilterCategory(e.target.value)}>
         <option value="all">すべて</option>
+        <option value="固定費">固定費</option>
           {categories.map((c) => (
             <option key={c.id} value={c.name}>
               {c.name}
@@ -223,7 +229,7 @@ export default function ViewPage() {
             >
             {/* 左：支出情報 */}
             <div>
-              <div>{e.amount}円 [{e.category?.name}]</div>
+              <div>{e.amount}円 [{e.category?.name ?? "固定費"}]</div>
               <div style={{ fontSize: "12px", color: "#666" }}>
                 {e.memo}
               </div>

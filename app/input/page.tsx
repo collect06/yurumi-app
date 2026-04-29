@@ -14,7 +14,6 @@ export default function InputPage() {
   const [month, setMonth] = useState(defaultMonth)
   const [amount, setAmount] = useState("")
   const [memo, setMemo] = useState("")
-  const [category, setCategory] = useState("コンビニ")
   const [budget, setBudget] = useState("")
   const [isWaste, setIsWaste] = useState(false)
   const [fixedName, setFixedName] = useState("")
@@ -73,7 +72,8 @@ export default function InputPage() {
             month,
             is_waste: false,
             is_fixed: true,
-            date: `${month}-01`
+            date: `${month}-01`,
+            category_id: null   // ← これが重要
           })
         }
       }
@@ -99,16 +99,17 @@ export default function InputPage() {
       {
         amount: Number(amount),
         memo,
-        category_id: categoryId, // ←ここ
+        category_id: categoryId,
         month,
         is_waste: isWaste,
+        is_fixed: false,
         date
       },
     ])
 
     if (error) {
       console.error(error)
-      alert("登録失敗")
+      alert(error.message)
       return
     }
 
