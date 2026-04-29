@@ -3,7 +3,8 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts"
 import Header from "../components/Header"
-//
+import { CSSProperties } from "react"
+
 const COLORS = ["#4CAF50", "#2196F3", "#FF9800", "#E91E63", "#9C27B0"]
 
 export default function ViewPage() {
@@ -44,7 +45,7 @@ export default function ViewPage() {
   const fetchData = async () => {
     const { data } = await supabase
       .from("expenses")
-      .select("*")
+      .select(`*,category:categories(name)`)
       .eq("month", month)
 
     if (data) setExpenses(data)
@@ -90,13 +91,12 @@ export default function ViewPage() {
   const remaining = budget - wasteTotal
 
   const grouped = Object.values(
-    targetExpenses.reduce((acc: any, cur) => {
-      if (!cur.category) return acc // ←これ重要
+    expenses.reduce((acc: any, cur) => {
+      const name = cur.category?.name || "不明"
 
-      if (!acc[cur.category]) {
-      acc[cur.category] = { name: cur.category, value: 0 }
-      }
-      acc[cur.category].value += cur.amount
+      if (!acc[name]) acc[name] = { name, value: 0 }
+      acc[name].value += cur.amount
+
       return acc
     }, {})
   )
@@ -114,10 +114,12 @@ export default function ViewPage() {
       if (!existing || existing.length === 0) {
         await supabase.from("expenses").insert({
           amount: f.amount,
-          category: f.category,
+          category_id: f.category_id,
           memo: f.name,
           month,
-          is_waste: false
+          is_waste: false,
+          is_fixed: true,
+          date: `${month}-01`
         })
       }
     }
@@ -158,7 +160,8 @@ export default function ViewPage() {
 
       <div style={card}>
         <h3>カテゴリ別グラフ</h3>
-        <PieChart width={280} height={240}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+        <PieChart width={300} height={300}>
           <Pie
             data={grouped}
             dataKey="value"
@@ -173,6 +176,7 @@ export default function ViewPage() {
           <Tooltip />
           <Legend />
         </PieChart>
+        </div>
       </div>
 
       <select onChange={(e) => setFilterCategory(e.target.value)}>
@@ -219,7 +223,7 @@ export default function ViewPage() {
             >
             {/* 左：支出情報 */}
             <div>
-              <div>{e.amount}円 [{e.category}]</div>
+              <div>{e.amount}円 [{e.category?.name}]</div>
               <div style={{ fontSize: "12px", color: "#666" }}>
                 {e.memo}
               </div>
@@ -286,6 +290,7 @@ const container = {
   maxWidth: 500,
   margin: "0 auto",
   padding: 20,
+  paddingTop: 90,
 }
 
 const header = {
@@ -294,16 +299,15 @@ const header = {
   alignItems: "center",
 }
 
-const card = {
-  display: "flex",
-  justifyContent: "center",
-  width: "100%",
+const card: CSSProperties = {
   background: "white",
   padding: 20,
   marginTop: 20,
   borderRadius: 10,
   boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+  textAlign: "center"
 }
+
 
 const input = {
   width: "100%",

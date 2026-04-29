@@ -22,57 +22,65 @@ export default function InputPage() {
   const [fixedCosts, setFixedCosts] = useState<any[]>([])
 
   const [categories, setCategories] = useState<any[]>([])
+  // 変更点：category → categoryId
+  const [categoryId, setCategoryId] = useState<number | null>(null)
   const [date, setDate] = useState(
     new Date().toISOString().split("T")[0]
   )
 
   // 予算取得
   useEffect(() => {
-    const fetchBudget = async () => {
-      const { data } = await supabase
+    const fetchAll = async () => {
+      // 予算
+      const { data: budgetData } = await supabase
         .from("budgets")
         .select("*")
         .eq("month", month)
         .single()
 
-      if (data) setBudget(String(data.amount))
+      if (budgetData) setBudget(String(budgetData.amount))
       else setBudget("")
 
-      fetchCategories()
-    }
-
-  const fetchCategories = async () => {
-    const { data } = await supabase.from("categories").select("*")
-    if (data) setCategories(data)
-  }
-
-  const insertFixedCosts = async () => {
-    const { data: fixed } = await supabase.from("fixed_costs").select("*")
-
-    for (const f of fixed || []) {
-      const { data: existing } = await supabase
-        .from("expenses")
+      // カテゴリ
+      const { data: catData } = await supabase
+        .from("categories")
         .select("*")
-        .eq("month", month)
-        .eq("memo", f.name)
 
-      if (!existing || existing.length === 0) {
-        await supabase.from("expenses").insert({
-          amount: f.amount,
-          memo: f.name,
-          month,
-          is_waste: false,
-          is_fixed: true
-        })
+      if (catData) {
+        setCategories(catData)
+        if (catData.length > 0) setCategoryId(catData[0].id)
+      }
+
+      // 固定費
+      const { data: fixed } = await supabase
+        .from("fixed_costs")
+        .select("*")
+
+      setFixedCosts(fixed || [])
+
+      // 固定費をexpensesに反映
+      for (const f of fixed || []) {
+        const { data: existing } = await supabase
+          .from("expenses")
+          .select("id")
+          .eq("month", month)
+          .eq("memo", f.name)
+
+        if (!existing || existing.length === 0) {
+          await supabase.from("expenses").insert({
+            amount: f.amount,
+            memo: f.name,
+            month,
+            is_waste: false,
+            is_fixed: true,
+            date: `${month}-01`
+          })
+        }
       }
     }
-  }
 
-  fetchBudget()
-  fetchFixedCosts()
-  insertFixedCosts()
-
-}, [month])
+    fetchAll()
+  }, [month])
 
   // 予算保存
   const saveBudget = async () => {
@@ -85,18 +93,24 @@ export default function InputPage() {
 
   // 支出追加
   const addExpense = async () => {
-    if (!amount) return
+    if (!amount || !categoryId) return
 
-    await supabase.from("expenses").insert([
+    const { error } = await supabase.from("expenses").insert([
       {
         amount: Number(amount),
         memo,
-        category,
+        category_id: categoryId, // ←ここ
         month,
         is_waste: isWaste,
         date
       },
     ])
+
+    if (error) {
+      console.error(error)
+      alert("登録失敗")
+      return
+    }
 
     setAmount("")
     setMemo("")
@@ -187,12 +201,12 @@ export default function InputPage() {
         </select>
 
         <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          value={categoryId ?? ""}
+          onChange={(e) => setCategoryId(Number(e.target.value))}
           style={input}
         >
           {categories.map((c) => (
-            <option key={c.id} value={c.name}>
+            <option key={c.id} value={c.id}>
               {c.name}
             </option>
           ))}
