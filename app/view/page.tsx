@@ -24,6 +24,8 @@ export default function ViewPage() {
 
   const [categories, setCategories] = useState<any[]>([])
 
+  const targetExpenses = expenses.filter(e => !e.is_fixed)
+
   useEffect(() => {
     const init = async () => {
       await insertFixedCosts()
@@ -81,16 +83,19 @@ export default function ViewPage() {
     fetchData()
   }
 
-  const total = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const wasteTotal = expenses
+  const total = targetExpenses.reduce((sum, e) => sum + e.amount, 0)
+  const wasteTotal = targetExpenses
     .filter((e) => e.is_waste)
     .reduce((sum, e) => sum + e.amount, 0)
   const remaining = budget - wasteTotal
 
   const grouped = Object.values(
-    expenses.reduce((acc: any, cur) => {
-      if (!acc[cur.category])
-        acc[cur.category] = { name: cur.category, value: 0 }
+    targetExpenses.reduce((acc: any, cur) => {
+      if (!cur.category) return acc // ←これ重要
+
+      if (!acc[cur.category]) {
+      acc[cur.category] = { name: cur.category, value: 0 }
+      }
       acc[cur.category].value += cur.amount
       return acc
     }, {})
@@ -118,7 +123,7 @@ export default function ViewPage() {
     }
   }
 
-  const filteredExpenses = expenses
+  const filteredExpenses = targetExpenses
     .filter((e) => {
       if (showWasteOnly && !e.is_waste) return false
       if (filterCategory !== "all" && e.category !== filterCategory) return false
@@ -153,7 +158,7 @@ export default function ViewPage() {
 
       <div style={card}>
         <h3>カテゴリ別グラフ</h3>
-        <PieChart width={350} height={300}>
+        <PieChart width={280} height={240}>
           <Pie
             data={grouped}
             dataKey="value"
@@ -290,6 +295,9 @@ const header = {
 }
 
 const card = {
+  display: "flex",
+  justifyContent: "center",
+  width: "100%",
   background: "white",
   padding: 20,
   marginTop: 20,
