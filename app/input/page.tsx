@@ -44,6 +44,8 @@ export default function InputPage() {
       const { data: catData } = await supabase
         .from("categories")
         .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true })
 
       if (catData) {
         setCategories(catData)
