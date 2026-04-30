@@ -85,6 +85,27 @@ export default function SettingsPage() {
     await fetchCategories()
   }
 
+  const saveEdit = async (id: number) => {
+    if (!editName) return
+  
+    const { error } = await supabase
+      .from("categories")
+      .update({ name: editName })
+      .eq("id", id)
+  
+    if (error) {
+      console.error(error)
+      alert("更新失敗")
+      return
+    }
+  
+    alert("更新しました")
+  
+    setEditingId(null)
+    setEditName("")
+    fetchCategories()
+  }
+
   return (
     <div style={container}>
 
