@@ -13,8 +13,9 @@ export default function CalendarPage() {
 
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editAmount, setEditAmount] = useState("")
+  const [editDate, setEditDate] = useState("")
   const [editMemo, setEditMemo] = useState("")
-
+  
   const [fade, setFade] = useState(true)
   const [direction, setDirection] = useState(0)
 
@@ -115,6 +116,7 @@ export default function CalendarPage() {
       .from("expenses")
       .update({
         amount: Number(editAmount),
+        date: editDate,
         memo: editMemo
       })
       .eq("id", id)
@@ -267,6 +269,7 @@ export default function CalendarPage() {
                   onClick={() => {
                     setEditingId(e.id)
                     setEditAmount(String(e.amount))
+                    setEditDate(e.date ?? "")
                     setEditMemo(e.memo || "")
                   }}
                 >
@@ -288,6 +291,12 @@ export default function CalendarPage() {
                     type="number"
                     value={editAmount}
                     onChange={(e) => setEditAmount(e.target.value)}
+                  />
+                  <input
+                    style={input}
+                    type="date"
+                    value={editDate}
+                    onChange={(ev) => setEditDate(ev.target.value)}
                   />
                   <input
                     style={input}
