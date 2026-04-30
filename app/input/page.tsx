@@ -63,7 +63,7 @@ export default function InputPage() {
           .from("expenses")
           .select("id")
           .eq("month", month)
-          .eq("memo", f.name)
+          .eq("fixed_cost_id", f.id)
 
         if (!existing || existing.length === 0) {
           await supabase.from("expenses").insert({
@@ -73,7 +73,8 @@ export default function InputPage() {
             is_waste: false,
             is_fixed: true,
             date: `${month}-01`,
-            category_id: null   // ← これが重要
+            category_id: null,
+            fixed_cost_id: f.id
           })
         }
       }
