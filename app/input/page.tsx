@@ -59,6 +59,10 @@ export default function InputPage() {
 
       // 固定費をexpensesに反映
       for (const f of fixed || []) {
+        // 月条件
+        if (f.start_month > month) continue
+        if (f.end_month && f.end_month < month) continue
+        
         const { data: existing } = await supabase
           .from("expenses")
           .select("id")
@@ -134,10 +138,14 @@ export default function InputPage() {
     fetchFixedCosts()
   }
 
-  const deleteFixedCost = async (id: number) => {
-    await supabase.from("fixed_costs").delete().eq("id", id)
+  // 固定費停止
+  const stopFixedCost = async (id: number) => {
+    await supabase
+      .from("fixed_costs")
+      .update({ end_month: month })
+      .eq("id", id)
 
-    alert("固定費を削除しました")
+    alert("固定費を停止しました")
     fetchFixedCosts()
   }
 
@@ -145,6 +153,7 @@ export default function InputPage() {
     const { data } = await supabase
       .from("fixed_costs")
       .select("*")
+      .is("end_month", null)
 
     if (data) setFixedCosts(data)
   }
@@ -275,9 +284,9 @@ export default function InputPage() {
 
             <button
               style={deleteButtonStyle}
-              onClick={() => deleteFixedCost(f.id)}
+              onClick={() => stopFixedCost(f.id)}
             >
-              削除
+              停止
             </button>
           </div>
         ))}
