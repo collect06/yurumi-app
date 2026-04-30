@@ -123,13 +123,13 @@ export default function ViewPage() {
       if (month < f.start_month) continue
       if (f.end_month && month > f.end_month) continue
       
-      const { data: existing } = await supabase
+      /*const { data: existing } = await supabase
         .from("expenses")
         .select("id")
         .eq("month", month)
-        .eq("fixed_cost_id", f.id)
+        .eq("fixed_cost_id", f.id)*/
 
-      if (!existing || existing.length === 0) {
+      //if (!existing || existing.length === 0) {
         await supabase.from("expenses").upsert({
           amount: f.amount,
           memo: f.name,
@@ -142,7 +142,7 @@ export default function ViewPage() {
         },{
           onConflict: "month,fixed_cost_id"
         })
-      }
+      //}
     }
   }
 
@@ -188,13 +188,14 @@ export default function ViewPage() {
       <div style={card}>
         <h3>カテゴリ別グラフ</h3>
         <div style={{ display: "flex", justifyContent: "center" }}>
-        <PieChart width={260} height={260}>
+        <PieChart width={320} height={320}>
           <Pie
             data={grouped}
             dataKey="value"
             nameKey="name"
-            outerRadius={90}
+            outerRadius={85}
             labelLine={false}
+            label={({ name, value }) => `${name}:${value}`}
           >
             {grouped.map((_, index) => (
               <Cell key={index} fill={COLORS[index % COLORS.length]} />
