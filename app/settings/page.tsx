@@ -120,7 +120,7 @@ export default function SettingsPage() {
 
       {/* カテゴリ追加 */}
       <div style={card}>
-        <h3>カテゴリ追加</h3>
+        <h3 style={sectionTitle}>カテゴリ追加</h3>
 
         <input
           style={input}
@@ -136,14 +136,14 @@ export default function SettingsPage() {
 
       {/* カテゴリ一覧 */}
       <div style={card}>
-        <h3>カテゴリ管理</h3>
+        <h3 style={sectionTitle}>カテゴリ管理</h3>
 
         {categories.map((c, index) => (
   <div
     key={c.id}
     style={{
-      marginBottom: editingId === c.id ? 16 : 8,
-      padding: editingId === c.id ? 12 : 6,
+      marginBottom: editingId === c.id ? 14 : 4,
+      padding: editingId === c.id ? 10 : 4,
       borderRadius: 10,
       background: editingId === c.id ? "#f0fdf4" : "transparent",
       transition: "0.2s",
@@ -159,7 +159,7 @@ export default function SettingsPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          minHeight: 44
+          minHeight: 36
         }}>
           
           <input
@@ -169,7 +169,7 @@ export default function SettingsPage() {
           />
 
           <div style={{ display: "flex", gap: 6 }}>
-            <button style={smallBtn} onClick={() => saveEdit(c.id)}>
+            <button style={saveBtn} onClick={() => saveEdit(c.id)}>
               保存
             </button>
 
@@ -200,7 +200,7 @@ export default function SettingsPage() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        minHeight: 44
+        minHeight: 36
       }}>
         <span>{c.name}</span>
 
@@ -259,10 +259,10 @@ const card = {
 
 const input = {
   width: "100%",
-  padding: 10,
+  padding: 8,
   borderRadius: 6,
   border: "1px solid #ccc",
-  marginTop: 10
+  marginTop: 6
 }
 
 const addBtn = {
@@ -286,17 +286,19 @@ const deleteBtn = {
   background: "#ef4444",
   color: "white",
   border: "none",
-  padding: "8px 12px",
-  borderRadius: 8,
-  fontWeight: "bold"
+  padding: "6px 10px",
+  fontSize: 13,
+  borderRadius: 6,
+  cursor: "pointer"
 }
 
 const editBtn = {
   background: "#3b82f6",
   color: "white",
   border: "none",
-  padding: "6px 12px",
-  borderRadius: 8,
+  padding: "6px 10px",
+　fontSize: 13,
+  borderRadius: 6,
   cursor: "pointer"
 }
 
@@ -317,11 +319,18 @@ const arrowWrap = {
   marginTop: 8
 }
 
-const smallBtn = {
-  padding: "8px 12px",
-  background: "#4CAF50",
+const saveBtn = {
+  padding: "6px 10px",
+  background: "#22c55e",
   color: "white",
   border: "none",
+  fontSize: 13,
   borderRadius: 6,
   cursor: "pointer"
+}
+
+const sectionTitle = {
+  fontSize: 18,
+  fontWeight: "bold",
+  marginBottom: 8
 }
