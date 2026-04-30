@@ -115,57 +115,60 @@ export default function SettingsPage() {
       <div style={card}>
         <h3>カテゴリ管理</h3>
 
-        {categories.map((c, i) => (
+        {categories.map((c, index) => (
           <div key={c.id} style={row}>
-
-            {/* 左 */}
-            {editingId === c.id ? (
-              <input
-                style={{ ...input, marginTop: 0 }}
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-              />
-            ) : (
-              <span>{c.name}</span>
-            )}
-
-            {/* 右 */}
-            <div style={{ display: "flex", gap: 6 }}>
-
+            
+            {/* 左側 */}
+            <div style={{ flex: 1 }}>
               {editingId === c.id ? (
                 <>
-                  <button onClick={() => move(i, -1)}>↑</button>
-                  <button onClick={() => move(i, 1)}>↓</button>
-
-                  <button style={addBtn} onClick={() => updateCategory(c.id)}>
-                    保存
-                  </button>
+                  <input
+                    style={input}
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                  />
+        
+                  {/* 矢印（編集時のみ） */}
+                  <div style={arrowWrap}>
+                    <button style={arrowBtn} onClick={() => move(index, -1)}>
+                      ↑
+                    </button>
+                    <button style={arrowBtn} onClick={() => move(index, 1)}>
+                      ↓
+                    </button>
+                  </div>
                 </>
               ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      setEditingId(c.id)
-                      setEditName(c.name)
-                    }}
-                  >
-                    編集
-                  </button>
-
-                  <button
-                    style={deleteBtn}
-                    onClick={() => deleteCategory(c.id)}
-                  >
-                    削除
-                  </button>
-                </>
+                <span>{c.name}</span>
               )}
-
+            </div>
+        
+            {/* 右側 */}
+            <div style={{ display: "flex", gap: 8 }}>
+              
+              {editingId === c.id ? (
+                <button style={addBtn} onClick={() => saveEdit(c.id)}>
+                  保存
+                </button>
+              ) : (
+                <button
+                  style={editBtn}
+                  onClick={() => {
+                    setEditingId(c.id)
+                    setEditName(c.name)
+                  }}
+                >
+                  編集
+                </button>
+              )}
+        
+              <button style={deleteBtn} onClick={() => deleteCategory(c.id)}>
+                削除
+              </button>
             </div>
           </div>
         ))}
       </div>
-
     </div>
   )
 }
@@ -226,4 +229,30 @@ const deleteBtn = {
   border: "none",
   padding: "6px 10px",
   borderRadius: 6
+}
+
+const editBtn = {
+  background: "#3b82f6",
+  color: "white",
+  border: "none",
+  padding: "6px 12px",
+  borderRadius: 8,
+  cursor: "pointer"
+}
+
+const arrowBtn = {
+  width: 36,
+  height: 36,
+  fontSize: 18,
+  borderRadius: 8,
+  border: "1px solid #ddd",
+  background: "white",
+  cursor: "pointer",
+  transition: "0.2s"
+}
+
+const arrowWrap = {
+  display: "flex",
+  gap: 6,
+  marginTop: 8
 }
