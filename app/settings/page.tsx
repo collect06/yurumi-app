@@ -9,6 +9,8 @@ export default function SettingsPage() {
 
   const [categories, setCategories] = useState<any[]>([])
   const [newCategory, setNewCategory] = useState("")
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editName, setEditName] = useState("")
 
   useEffect(() => {
     fetchCategories()
@@ -18,67 +20,138 @@ export default function SettingsPage() {
     const { data } = await supabase
       .from("categories")
       .select("*")
-      .eq("is_active", true)
+      .is("deleted_at", null)
+      .order("sort_order", { ascending: true })
+
     if (data) setCategories(data)
   }
 
   const addCategory = async () => {
     if (!newCategory) return
 
+    const maxOrder = Math.max(...categories.map(c => c.sort_order || 0), 0)
+
     await supabase.from("categories").insert({
-      name: newCategory
+      name: newCategory,
+      sort_order: maxOrder + 1
     })
 
     setNewCategory("")
     fetchCategories()
   }
 
+  const updateCategory = async (id: number) => {
+    await supabase
+      .from("categories")
+      .update({ name: editName })
+      .eq("id", id)
+
+    setEditingId(null)
+    fetchCategories()
+  }
+
   const deleteCategory = async (id: number) => {
     await supabase
       .from("categories")
-      .update({ is_active: false })
+      .update({ deleted_at: new Date().toISOString() })
       .eq("id", id)
-  
+
     fetchCategories()
-    alert("カテゴリを削除しました")
+  }
+
+  const move = async (index: number, direction: number) => {
+    const target = categories[index]
+    const swap = categories[index + direction]
+    if (!swap) return
+
+    await supabase.from("categories").update({
+      sort_order: swap.sort_order
+    }).eq("id", target.id)
+
+    await supabase.from("categories").update({
+      sort_order: target.sort_order
+    }).eq("id", swap.id)
+
+    fetchCategories()
   }
 
   return (
     <div style={container}>
 
-      {/* 🔙 戻るボタン */}
-      <button style={backBtn} onClick={() => router.back()}>
+      {/* 戻る */}
+      <button style={backBtn} onClick={() => router.push("/")}>
         ← 戻る
       </button>
 
       <h2>⚙️ 設定</h2>
 
+      {/* カテゴリ追加 */}
       <div style={card}>
-        <h3>カテゴリ管理</h3>
+        <h3>カテゴリ追加</h3>
 
         <input
+          style={input}
           value={newCategory}
           onChange={(e) => setNewCategory(e.target.value)}
           placeholder="カテゴリ名"
-          style={input}
         />
 
         <button style={addBtn} onClick={addCategory}>
-          ＋ 追加
+          追加
         </button>
       </div>
 
+      {/* カテゴリ一覧 */}
       <div style={card}>
-        {categories.map((c) => (
-          <div key={c.id} style={row}>
-            <span>{c.name}</span>
+        <h3>カテゴリ管理</h3>
 
-            <button
-              style={deleteBtn}
-              onClick={() => deleteCategory(c.id)}
-            >
-              削除
-            </button>
+        {categories.map((c, i) => (
+          <div key={c.id} style={row}>
+
+            {/* 左 */}
+            {editingId === c.id ? (
+              <input
+                style={{ ...input, marginTop: 0 }}
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+              />
+            ) : (
+              <span>{c.name}</span>
+            )}
+
+            {/* 右 */}
+            <div style={{ display: "flex", gap: 6 }}>
+
+              {editingId === c.id ? (
+                <>
+                  <button onClick={() => move(i, -1)}>↑</button>
+                  <button onClick={() => move(i, 1)}>↓</button>
+
+                  <button style={addBtn} onClick={() => updateCategory(c.id)}>
+                    保存
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      setEditingId(c.id)
+                      setEditName(c.name)
+                    }}
+                  >
+                    編集
+                  </button>
+
+                  <button
+                    style={deleteBtn}
+                    onClick={() => deleteCategory(c.id)}
+                  >
+                    削除
+                  </button>
+                </>
+              )}
+
+            </div>
           </div>
         ))}
       </div>
