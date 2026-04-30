@@ -105,20 +105,25 @@ export default function ViewPage() {
     const { data: fixed } = await supabase.from("fixed_costs").select("*")
 
     for (const f of fixed || []) {
+      // 対象月チェック
+      if (month < f.start_month) continue
+      if (f.end_month && month > f.end_month) continue
+      
       const { data: existing } = await supabase
         .from("expenses")
         .select("id")
         .eq("month", month)
-        .eq("memo", f.name)
+        .eq("fixed_cost_id", f.id)
 
       if (!existing || existing.length === 0) {
         await supabase.from("expenses").insert({
           amount: f.amount,
-          category_id: f.category_id,
           memo: f.name,
           month,
           is_waste: false,
           is_fixed: true,
+          fixed_cost_id: f.id,
+          category_id: null,
           date: `${month}-01`
         })
       }
@@ -231,7 +236,7 @@ export default function ViewPage() {
             <div>
               <div>{e.amount}円 [{e.category?.name ?? "固定費"}]</div>
               <div style={{ fontSize: "12px", color: "#666" }}>
-                {e.memo}
+                {new Date(e.date).toISOString().split("T")[0]}：{e.memo}
               </div>
             </div>
 
@@ -273,13 +278,14 @@ export default function ViewPage() {
                 value={editMemo}
                 onChange={(ev) => setEditMemo(ev.target.value)}
               />
-
-              <button
-                style={buttonStyle}
-                onClick={() => updateExpense(e.id)}
-              >
-                保存
-              </button>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "6px" }}>
+                <button
+                  style={buttonStyle}
+                  onClick={() => updateExpense(e.id)}
+                >
+                  保存
+                </button>
+              </div>
             </div>
           )}
         </div>
