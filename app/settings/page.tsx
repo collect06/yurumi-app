@@ -59,6 +59,8 @@ export default function SettingsPage() {
   }
 
   const deleteCategory = async (id: number) => {
+    if (!confirm("削除しますか？")) return
+
     await supabase
       .from("categories")
       .update({ deleted_at: new Date().toISOString() })
@@ -140,8 +142,8 @@ export default function SettingsPage() {
   <div
     key={c.id}
     style={{
-      marginBottom: 16,
-      padding: 12,
+      marginBottom: editingId === c.id ? 16 : 8,
+      padding: editingId === c.id ? 12 : 6,
       borderRadius: 10,
       background: editingId === c.id ? "#f0fdf4" : "transparent",
       transition: "0.2s",
@@ -156,7 +158,8 @@ export default function SettingsPage() {
         <div style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
+          minHeight: 44
         }}>
           
           <input
@@ -196,7 +199,8 @@ export default function SettingsPage() {
       <div style={{
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
+        minHeight: 44
       }}>
         <span>{c.name}</span>
 
@@ -206,6 +210,7 @@ export default function SettingsPage() {
             onClick={() => {
               setEditingId(c.id)
               setEditName(c.name)
+              setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0)
             }}
           >
             編集
@@ -281,8 +286,9 @@ const deleteBtn = {
   background: "#ef4444",
   color: "white",
   border: "none",
-  padding: "6px 10px",
-  borderRadius: 6
+  padding: "8px 12px",
+  borderRadius: 8,
+  fontWeight: "bold"
 }
 
 const editBtn = {
