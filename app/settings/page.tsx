@@ -15,7 +15,10 @@ export default function SettingsPage() {
   }, [])
 
   const fetchCategories = async () => {
-    const { data } = await supabase.from("categories").select("*")
+    const { data } = await supabase
+      .from("categories")
+      .select("*")
+      .eq("is_active", true)
     if (data) setCategories(data)
   }
 
@@ -30,9 +33,14 @@ export default function SettingsPage() {
     fetchCategories()
   }
 
-  const deleteCategory = async (id: string) => {
-    await supabase.from("categories").delete().eq("id", id)
+  const deleteCategory = async (id: number) => {
+    await supabase
+      .from("categories")
+      .update({ is_active: false })
+      .eq("id", id)
+  
     fetchCategories()
+    alert("カテゴリを削除しました")
   }
 
   return (
