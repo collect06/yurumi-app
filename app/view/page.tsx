@@ -186,7 +186,7 @@ export default function ViewPage() {
       <div style={card}>
         <h3>カテゴリ別グラフ</h3>
         <div style={{ display: "flex", justifyContent: "center" }}>
-        <PieChart width={300} height={300}>
+        <PieChart width={260} height={260}>
           <Pie
             data={grouped}
             dataKey="value"
@@ -199,7 +199,7 @@ export default function ViewPage() {
             ))}
           </Pie>
           <Tooltip />
-          <Legend />
+          <Legend verticalAlign="bottom" />
         </PieChart>
         </div>
       </div>
