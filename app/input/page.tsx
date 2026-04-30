@@ -198,49 +198,59 @@ export default function InputPage() {
       <div style={card}>
         <h3>✍ 支出入力</h3>
 
-        <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="金額"
-          style={input}
-        />
+        <div style={field}>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="金額"
+            style={input}
+          />
+        </div>
 
-        <select
-          value={isWaste ? "true" : "false"}
-          onChange={(e) => setIsWaste(e.target.value === "true")}
-          style={input}
-        >
-          <option value="false">通常支出</option>
-          <option value="true">無駄支出</option>
-        </select>
+        <div style={field}>
+          <select
+            value={isWaste ? "true" : "false"}
+            onChange={(e) => setIsWaste(e.target.value === "true")}
+            style={input}
+          >
+            <option value="false">通常支出</option>
+            <option value="true">無駄支出</option>
+          </select>
+        </div>
 
-        <select
-          value={categoryId ?? ""}
-          onChange={(e) => setCategoryId(Number(e.target.value))}
-          style={input}
-        >
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+        <div style={field}>
+          <select
+            value={categoryId ?? ""}
+            onChange={(e) => setCategoryId(Number(e.target.value))}
+            style={input}
+          >
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <input
-          style={inputStyle}
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+        <div style={field}>
+          <input
+            style={inputStyle}
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </div>
 
-        <input
-          type="text"
-          value={memo}
-          onChange={(e) => setMemo(e.target.value)}
-          placeholder="メモ"
-          style={input}
-        />
+        <div style={field}>
+          <input
+            type="text"
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+            placeholder="メモ"
+            style={input}
+          />
+        </div>
 
         <button style={primaryButton} onClick={addExpense}>
           支出を追加
@@ -387,4 +397,8 @@ const deleteButtonStyle = {
   padding: "6px 12px",
   borderRadius: "8px",
   border: "none"
+}
+
+const field = {
+  marginTop: 12
 }
