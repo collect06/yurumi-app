@@ -20,7 +20,7 @@ export default function SettingsPage() {
     const { data } = await supabase
       .from("categories")
       .select("*")
-      .is("deleted_at", null)
+      .is("is_active", true)
       .order("sort_order", { ascending: true })
 
     if (data) setCategories(data)
@@ -29,11 +29,19 @@ export default function SettingsPage() {
   const addCategory = async () => {
     if (!newCategory) return
 
-    const maxOrder = Math.max(...categories.map(c => c.sort_order || 0), 0)
-
+    const { data: max } = await supabase
+      .from("categories")
+      .select("sort_order")
+      .order("sort_order", { ascending: false })
+      .limit(1)
+      .single()
+    
+    const nextOrder = (max?.sort_order ?? -1) + 1
+    
     await supabase.from("categories").insert({
       name: newCategory,
-      sort_order: maxOrder + 1
+      sort_order: nextOrder,
+      is_active: true
     })
 
     setNewCategory("")
@@ -64,15 +72,17 @@ export default function SettingsPage() {
     const swap = categories[index + direction]
     if (!swap) return
 
-    await supabase.from("categories").update({
-      sort_order: swap.sort_order
-    }).eq("id", target.id)
+    await Promise.all([
+      supabase.from("categories").update({
+        sort_order: swap.sort_order
+      }).eq("id", target.id),
+    
+      supabase.from("categories").update({
+        sort_order: target.sort_order
+      }).eq("id", swap.id)
+    ])
 
-    await supabase.from("categories").update({
-      sort_order: target.sort_order
-    }).eq("id", swap.id)
-
-    fetchCategories()
+    await fetchCategories()
   }
 
   return (
