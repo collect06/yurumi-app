@@ -3,7 +3,8 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
 import { CSSProperties } from "react"
 import Header from "../components/Header"
-//
+import { Toaster, toast } from "react-hot-toast"
+
 export default function InputPage() {
   
   const now = new Date()
@@ -95,7 +96,7 @@ export default function InputPage() {
       .from("budgets")
       .upsert({ month, amount: Number(budget) }, { onConflict: "month" })
 
-    alert("予算を保存しました")
+    toast.success("予算を保存しました")
   }
 
   // 支出追加
@@ -116,13 +117,13 @@ export default function InputPage() {
 
     if (error) {
       console.error(error)
-      alert(error.message)
+      toast.error(error.message)
       return
     }
 
     setAmount("")
     setMemo("")
-    alert("支出を追加しました")
+    toast.success("支出を追加しました")
   }
 
   // 固定費自動追加
@@ -134,7 +135,7 @@ export default function InputPage() {
       }
     ])
 
-    alert("固定費を追加しました")
+    toast.success("固定費を追加しました")
     setFixedName("")
     setFixedAmount("")
     fetchFixedCosts()
@@ -142,12 +143,13 @@ export default function InputPage() {
 
   // 固定費停止
   const stopFixedCost = async (id: number) => {
+     if (!confirm("停止しますか？")) return
     await supabase
       .from("fixed_costs")
       .update({ end_month: month })
       .eq("id", id)
 
-    alert("固定費を停止しました")
+    toast.success("固定費を停止しました")
     fetchFixedCosts()
   }
 

@@ -107,6 +107,7 @@ export default function CalendarPage() {
   )
 
   const deleteExpense = async (id: number) => {
+     if (!confirm("削除しますか？")) return
     await supabase.from("expenses").delete().eq("id", id)
     fetchData()
   }
