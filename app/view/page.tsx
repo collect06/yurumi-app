@@ -130,7 +130,7 @@ export default function ViewPage() {
         .eq("fixed_cost_id", f.id)
 
       if (!existing || existing.length === 0) {
-        await supabase.from("expenses").insert({
+        await supabase.from("expenses").upsert({
           amount: f.amount,
           memo: f.name,
           month,
@@ -139,6 +139,8 @@ export default function ViewPage() {
           fixed_cost_id: f.id,
           category_id: null,
           date: `${month}-01`
+        },{
+          onConflict: "month,fixed_cost_id"
         })
       }
     }
@@ -191,8 +193,8 @@ export default function ViewPage() {
             data={grouped}
             dataKey="value"
             nameKey="name"
-            outerRadius={100}
-            label
+            outerRadius={90}
+            labelLine={false}
           >
             {grouped.map((_, index) => (
               <Cell key={index} fill={COLORS[index % COLORS.length]} />
