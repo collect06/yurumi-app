@@ -137,58 +137,91 @@ export default function SettingsPage() {
         <h3>カテゴリ管理</h3>
 
         {categories.map((c, index) => (
-          <div key={c.id} style={row}>
-            
-            {/* 左側 */}
-            <div style={{ flex: 1 }}>
-              {editingId === c.id ? (
-                <>
-                  <input
-                    style={input}
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                  />
-        
-                  {/* 矢印（編集時のみ） */}
-                  <div style={arrowWrap}>
-                    <button style={arrowBtn} onClick={() => move(index, -1)}>
-                      ↑
-                    </button>
-                    <button style={arrowBtn} onClick={() => move(index, 1)}>
-                      ↓
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <span>{c.name}</span>
-              )}
-            </div>
-        
-            {/* 右側 */}
-            <div style={{ display: "flex", gap: 8 }}>
-              
-              {editingId === c.id ? (
-                <button style={addBtn} onClick={() => saveEdit(c.id)}>
-                  保存
-                </button>
-              ) : (
-                <button
-                  style={editBtn}
-                  onClick={() => {
-                    setEditingId(c.id)
-                    setEditName(c.name)
-                  }}
-                >
-                  編集
-                </button>
-              )}
-        
-              <button style={deleteBtn} onClick={() => deleteCategory(c.id)}>
-                削除
-              </button>
-            </div>
+  <div
+    key={c.id}
+    style={{
+      marginBottom: 16,
+      padding: 12,
+      borderRadius: 10,
+      background: editingId === c.id ? "#f0fdf4" : "transparent",
+      transition: "0.2s",
+      minHeight: 60,
+      border: editingId === c.id ? "1px solid #bbf7d0" : "none"
+    }}
+  >
+
+    {editingId === c.id ? (
+      <>
+        {/* 1段目 */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
+          
+          <input
+            style={{ ...input, flex: 1, marginRight: 10, marginTop: 0 }}
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+          />
+
+          <div style={{ display: "flex", gap: 6 }}>
+            <button style={smallBtn} onClick={() => saveEdit(c.id)}>
+              保存
+            </button>
+
+            <button style={deleteBtn} onClick={() => deleteCategory(c.id)}>
+              削除
+            </button>
           </div>
-        ))}
+        </div>
+
+        {/* 2段目（矢印） */}
+        <div style={{
+          display: "flex",
+          gap: 10,
+          marginTop: 6,
+          paddingLeft: 4
+        }}>
+          <button style={arrowBtn} onClick={() => move(index, -1)}>
+            ↑
+          </button>
+          <button style={arrowBtn} onClick={() => move(index, 1)}>
+            ↓
+          </button>
+        </div>
+      </>
+    ) : (
+      /* 通常表示 */
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}>
+        <span>{c.name}</span>
+
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            style={editBtn}
+            onClick={() => {
+              setEditingId(c.id)
+              setEditName(c.name)
+            }}
+          >
+            編集
+          </button>
+
+          <button
+            style={deleteBtn}
+            onClick={() => deleteCategory(c.id)}
+          >
+            削除
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+))}
       </div>
     </div>
   )
@@ -262,12 +295,12 @@ const editBtn = {
 }
 
 const arrowBtn = {
-  width: 36,
-  height: 36,
-  fontSize: 18,
-  borderRadius: 8,
+  width: 40,
+  height: 40,
+  borderRadius: 10,
   border: "1px solid #ddd",
-  background: "white",
+  background: "#fafafa",
+  fontSize: 18,
   cursor: "pointer",
   transition: "0.2s"
 }
@@ -276,4 +309,13 @@ const arrowWrap = {
   display: "flex",
   gap: 6,
   marginTop: 8
+}
+
+const smallBtn = {
+  padding: "8px 12px",
+  background: "#4CAF50",
+  color: "white",
+  border: "none",
+  borderRadius: 6,
+  cursor: "pointer"
 }
