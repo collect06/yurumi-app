@@ -142,12 +142,12 @@ export default function SettingsPage() {
   <div
     key={c.id}
     style={{
-      marginBottom: editingId === c.id ? 14 : 4,
-      padding: editingId === c.id ? 10 : 4,
+      marginBottom: editingId === c.id ? 12 : 2,
+      padding: editingId === c.id ? 10 : 2,
       borderRadius: 10,
       background: editingId === c.id ? "#f0fdf4" : "transparent",
       transition: "0.2s",
-      minHeight: 60,
+      minHeight: 44,
       border: editingId === c.id ? "1px solid #bbf7d0" : "none"
     }}
   >
@@ -159,7 +159,8 @@ export default function SettingsPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          minHeight: 36
+          minHeight: 36,
+          gap: 8
         }}>
           
           <input
@@ -200,7 +201,8 @@ export default function SettingsPage() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        minHeight: 36
+        minHeight: 36,
+        gap: 8
       }}>
         <span>{c.name}</span>
 
@@ -286,9 +288,9 @@ const deleteBtn = {
   background: "#ef4444",
   color: "white",
   border: "none",
-  padding: "6px 10px",
-  fontSize: 13,
-  borderRadius: 6,
+  padding: "8px 14px",
+  fontSize: 14,
+  borderRadius: 8,
   cursor: "pointer"
 }
 
@@ -296,9 +298,9 @@ const editBtn = {
   background: "#3b82f6",
   color: "white",
   border: "none",
-  padding: "6px 10px",
-　fontSize: 13,
-  borderRadius: 6,
+  padding: "8px 14px",
+　fontSize: 14,
+  borderRadius: 8,
   cursor: "pointer"
 }
 
@@ -320,17 +322,17 @@ const arrowWrap = {
 }
 
 const saveBtn = {
-  padding: "6px 10px",
+  padding: "8px 14px",
   background: "#22c55e",
   color: "white",
   border: "none",
-  fontSize: 13,
-  borderRadius: 6,
+  fontSize: 14,
+  borderRadius: 8,
   cursor: "pointer"
 }
 
 const sectionTitle = {
-  fontSize: 18,
+  fontSize: 20,
   fontWeight: "bold",
   marginBottom: 8
 }
