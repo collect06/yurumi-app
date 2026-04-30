@@ -153,7 +153,7 @@ export default function ViewPage() {
           style={input}
         />
 
-        <div style={{ marginTop: 15 }}>
+        <div style={{ marginTop: 15, textAlign: "left" }}>
           <p>総支出: {total}円</p>
           <p>ゆるみ予算: <strong>{budget}円</strong></p>
           <p>ゆるみ支出: <strong>{wasteTotal}</strong>円</p>
