@@ -98,7 +98,7 @@ export default function ViewPage() {
     fetchData()
   }
 
-  const total = targetExpenses.reduce((sum, e) => sum + e.amount, 0)
+  const total = expenses.reduce((sum, e) => sum + e.amount, 0)
   const wasteTotal = targetExpenses
     .filter((e) => e.is_waste)
     .reduce((sum, e) => sum + e.amount, 0)

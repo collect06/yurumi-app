@@ -198,57 +198,67 @@ export default function InputPage() {
         <h3>✍ 支出入力</h3>
 
         <div style={field}>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="金額"
-            style={input}
-          />
+          <div style={fieldInner}>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="金額"
+              style={input}
+            />
+          </div>
         </div>
 
         <div style={field}>
-          <select
-            value={isWaste ? "true" : "false"}
-            onChange={(e) => setIsWaste(e.target.value === "true")}
-            style={input}
-          >
-            <option value="false">通常支出</option>
-            <option value="true">無駄支出</option>
-          </select>
+          <div style={fieldInner}>
+            <select
+              value={isWaste ? "true" : "false"}
+              onChange={(e) => setIsWaste(e.target.value === "true")}
+              style={input}
+            >
+              <option value="false">通常支出</option>
+              <option value="true">無駄支出</option>
+            </select>
+          </div>
         </div>
 
         <div style={field}>
-          <select
-            value={categoryId ?? ""}
-            onChange={(e) => setCategoryId(Number(e.target.value))}
-            style={input}
-          >
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+          <div style={fieldInner}>
+            <select
+              value={categoryId ?? ""}
+              onChange={(e) => setCategoryId(Number(e.target.value))}
+              style={input}
+            >
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div style={field}>
-          <input
-            style={inputStyle}
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+          <div style={fieldInner}>
+            <input
+              style={inputStyle}
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </div>
         </div>
 
         <div style={field}>
-          <input
-            type="text"
-            value={memo}
-            onChange={(e) => setMemo(e.target.value)}
-            placeholder="メモ"
-            style={input}
-          />
+          <div style={fieldInner}>
+            <input
+              type="text"
+              value={memo}
+              onChange={(e) => setMemo(e.target.value)}
+              placeholder="メモ"
+              style={input}
+            />
+          </div>
         </div>
 
         <button style={primaryButton} onClick={addExpense}>
@@ -353,13 +363,14 @@ const card = {
   boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
 }
 
-const input = {
+const input: CSSProperties = {
   width: "100%",
-  padding: 10,
-  marginTop: 10,
-  borderRadius: 6,
-  border: "1px solid #ccc",
-  fontSize: 14,
+  padding: "10px 12px",
+  borderRadius: 8,
+  border: "1px solid #ddd",
+  fontSize: 16,
+  boxSizing: "border-box", // ← これが超重要
+  appearance: "none" // ← selectのズレ防止
 }
 
 const primaryButton = {
@@ -400,4 +411,9 @@ const deleteButtonStyle = {
 
 const field = {
   marginTop: 12
+}
+
+const fieldInner = {
+  maxWidth: 420,
+  margin: "0 auto"
 }
