@@ -29,6 +29,8 @@ export default function ViewPage() {
 
   const targetExpenses = expenses.filter(e => !e.is_fixed)
 
+  const [editDate, setEditDate] = useState("")
+
   useEffect(() => {
     const init = async () => {
       await insertFixedCosts()
@@ -78,7 +80,8 @@ export default function ViewPage() {
       .from("expenses")
       .update({
         amount: Number(editAmount),
-        memo: editMemo
+        memo: editMemo,
+        date: editDate
       })
       .eq("id", id)
 
@@ -266,6 +269,7 @@ export default function ViewPage() {
                   setEditingId(e.id)
                   setEditAmount(String(e.amount))
                   setEditMemo(e.memo || "")
+                  setEditDate(e.date)
                 }}
               >
                 編集
@@ -290,6 +294,13 @@ export default function ViewPage() {
                 onChange={(ev) => setEditAmount(ev.target.value)}
               />
 
+              <input
+                style={input}
+                type="date"
+                value={editDate}
+                onChange={(e) => setEditDate(e.target.value)}
+              />
+              
               <input
                 style={input}
                 type="text"
@@ -334,8 +345,7 @@ const card: CSSProperties = {
   padding: 20,
   marginTop: 20,
   borderRadius: 10,
-  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-  textAlign: "center"
+  boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
 }
 
 
