@@ -19,7 +19,9 @@ export default function ViewPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editAmount, setEditAmount] = useState("")
   const [editMemo, setEditMemo] = useState("")
-  const [filterCategory, setFilterCategory] = useState("all")
+  
+  const [filterCategoryId, setFilterCategoryId] = useState<number | "all">("all")
+  
   const [showWasteOnly, setShowWasteOnly] = useState(false)
   const [sortOrder, setSortOrder] = useState("desc")
 
@@ -45,7 +47,7 @@ export default function ViewPage() {
   const fetchData = async () => {
     const { data } = await supabase
       .from("expenses")
-      .select(`*,category:categories(name)`)
+      .select(`*,category:categories(id,name)`)
       .eq("month", month)
 
     if (data) setExpenses(data)
@@ -60,6 +62,15 @@ export default function ViewPage() {
     else setBudget(0)
   }
 
+  // フィルター使用カテゴリ抽出
+  const usedCategories = Array.from(
+    new Map(
+      expenses
+        .filter(e => e.category_id && e.category)
+        .map(e => [e.category_id, e.category])
+    ).values()
+  )
+  
   const normalExpenses = expenses.filter(e => !e.is_fixed)
 
   const updateExpense = async (id: number) => {
@@ -133,17 +144,18 @@ export default function ViewPage() {
   const filteredExpenses = targetExpenses
     .filter((e) => {
       if (showWasteOnly && !e.is_waste) return false
-
-      if (filterCategory === "固定費") {
-        return e.is_fixed
-      }
-
-      if (filterCategory !== "all" && e.category?.name !== filterCategory) {
+  
+      if (filterCategoryId !== "all" && e.category_id !== filterCategoryId) {
         return false
       }
-
+  
       return true
     })
+    .sort((a, b) =>
+      sortOrder === "desc"
+        ? new Date(b.date).getTime() - new Date(a.date).getTime()
+        : new Date(a.date).getTime() - new Date(b.date).getTime()
+    )
 
   return (
     <div>
@@ -189,14 +201,20 @@ export default function ViewPage() {
         </div>
       </div>
 
-      <select onChange={(e) => setFilterCategory(e.target.value)}>
+      <select
+        value={filterCategoryId}
+        onChange={(e) =>
+          setFilterCategoryId(
+            e.target.value === "all" ? "all" : Number(e.target.value)
+          )
+        }
+      >
         <option value="all">すべて</option>
-        <option value="固定費">固定費</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.name}>
-              {c.name}
-            </option>
-          ))}
+        {usedCategories.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.name}
+          </option>
+        ))}
       </select>
 
       <label>
