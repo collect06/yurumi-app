@@ -29,7 +29,10 @@ export default function InputPage() {
 
   // 予算取得
   useEffect(() => {
-    const fetchAll = async () => {
+    fetchAll()
+  }, [month])
+
+  const fetchAll = async () => {
       // 予算
       const { data: budgetData } = await supabase
         .from("budgets")
@@ -56,13 +59,14 @@ export default function InputPage() {
       const { data: fixed } = await supabase
         .from("fixed_costs")
         .select("*")
+        .or(`end_month.is.null,end_month.gte.${month}`)
 
       setFixedCosts(fixed || [])
 
       // 固定費をexpensesに反映
       for (const f of fixed || []) {
         // 月条件
-        if (f.start_month > month) continue
+        if (f.start_month && f.start_month > month) continue
         if (f.end_month && f.end_month < month) continue
         
         const { data: existing } = await supabase
@@ -72,7 +76,7 @@ export default function InputPage() {
           .eq("fixed_cost_id", f.id)
 
         if (!existing || existing.length === 0) {
-          await supabase.from("expenses").insert({
+          await supabase.from("expenses").upsert({
             amount: f.amount,
             memo: f.name,
             month,
@@ -81,13 +85,12 @@ export default function InputPage() {
             date: `${month}-01`,
             category_id: null,
             fixed_cost_id: f.id
+          }, {
+            onConflict: "month,fixed_cost_id"
           })
         }
       }
     }
-
-    fetchAll()
-  }, [month])
 
   // 予算保存
   const saveBudget = async () => {
@@ -138,6 +141,7 @@ export default function InputPage() {
     setFixedName("")
     setFixedAmount("")
     fetchFixedCosts()
+    await fetchAll()
   }
 
   // 固定費停止
@@ -211,41 +215,47 @@ export default function InputPage() {
 
         <div style={field}>
           <div style={fieldInner}>
-            <select
-              value={isWaste ? "true" : "false"}
-              onChange={(e) => setIsWaste(e.target.value === "true")}
-              style={input}
-            >
-              <option value="false">通常支出</option>
-              <option value="true">無駄支出</option>
-            </select>
+            <div style={selectWrap}>
+              <select
+                value={isWaste ? "true" : "false"}
+                onChange={(e) => setIsWaste(e.target.value === "true")}
+                style={input}
+              >
+                <option value="false">通常支出</option>
+                <option value="true">無駄支出</option>
+              </select>
+            </div>
           </div>
         </div>
 
         <div style={field}>
           <div style={fieldInner}>
-            <select
-              value={categoryId ?? ""}
-              onChange={(e) => setCategoryId(Number(e.target.value))}
-              style={input}
-            >
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <div style={selectWrap}>
+              <select
+                value={categoryId ?? ""}
+                onChange={(e) => setCategoryId(Number(e.target.value))}
+                style={input}
+              >
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
         <div style={field}>
           <div style={fieldInner}>
-            <input
-              style={inputStyle}
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
+            <div style={selectWrap}>
+              <input
+                style={inputStyle}
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
           </div>
         </div>
 
@@ -416,4 +426,18 @@ const field = {
 const fieldInner = {
   maxWidth: 420,
   margin: "0 auto"
+}
+
+const selectWrap = {
+  position: "relative" as const
+}
+
+const selectArrow = {
+  position: "absolute" as const,
+  right: 12,
+  top: "50%",
+  transform: "translateY(-50%)",
+  pointerEvents: "none",
+  fontSize: 12,
+  color: "#666"
 }
