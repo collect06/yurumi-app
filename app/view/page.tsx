@@ -81,7 +81,8 @@ export default function ViewPage() {
       .update({
         amount: Number(editAmount),
         memo: editMemo,
-        date: editDate
+        date: editDate,
+        month: editDate.slice(0, 7)
       })
       .eq("id", id)
 
@@ -121,7 +122,7 @@ export default function ViewPage() {
     for (const f of fixed || []) {
       // 対象月チェック
       if (month < f.start_month) continue
-      if (f.end_month && month > f.end_month) continue
+      if (f.end_month && month >= f.end_month) continue
       
       /*const { data: existing } = await supabase
         .from("expenses")

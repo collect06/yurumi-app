@@ -59,7 +59,7 @@ export default function InputPage() {
       const { data: fixed } = await supabase
         .from("fixed_costs")
         .select("*")
-        .or(`end_month.is.null,end_month.gte.${month}`)
+        .is("end_month", null)
 
       setFixedCosts(fixed || [])
 
@@ -67,7 +67,7 @@ export default function InputPage() {
       for (const f of fixed || []) {
         // 月条件
         if (f.start_month && f.start_month > month) continue
-        if (f.end_month && f.end_month < month) continue
+        if (f.end_month && f.end_month <= month) continue
         
         const { data: existing } = await supabase
           .from("expenses")
@@ -133,7 +133,9 @@ export default function InputPage() {
     await supabase.from("fixed_costs").insert([
       {
         name: fixedName,
-        amount: Number(fixedAmount)
+        amount: Number(fixedAmount),
+        start_month: month,
+        end_month: null
       }
     ])
 
@@ -224,6 +226,7 @@ export default function InputPage() {
                 <option value="false">通常支出</option>
                 <option value="true">無駄支出</option>
               </select>
+              <span style={selectArrow}>▼</span>
             </div>
           </div>
         </div>
@@ -242,6 +245,7 @@ export default function InputPage() {
                   </option>
                 ))}
               </select>
+              <span style={selectArrow}>▼</span>
             </div>
           </div>
         </div>
@@ -432,7 +436,7 @@ const selectWrap = {
   position: "relative" as const
 }
 
-const selectArrow = {
+const selectArrow : CSSProperties = {
   position: "absolute" as const,
   right: 12,
   top: "50%",
