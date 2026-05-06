@@ -103,7 +103,7 @@ export default function CalendarPage() {
   }
 
   const selectedExpenses = expenses.filter(
-    (e) => e.date === selectedDate
+    (e) => e.date === selectedDate && !e.is_fixed
   )
 
   const deleteExpense = async (id: number) => {
@@ -118,7 +118,8 @@ export default function CalendarPage() {
       .update({
         amount: Number(editAmount),
         date: editDate,
-        memo: editMemo
+        memo: editMemo,
+        month: editDate.slice(0, 7)
       })
       .eq("id", id)
 
@@ -127,8 +128,9 @@ export default function CalendarPage() {
   }
 
   // 月合計
-  const total = expenses.reduce((sum, e) => {
+  const wasteTotal = expenses.reduce((sum, e) => {
     if (e.is_fixed) return sum
+    if (!e.is_waste) return sum
     return sum + e.amount
   }, 0)
 
@@ -154,16 +156,16 @@ export default function CalendarPage() {
 
       <div style={budgetBox}>
           <div style={budgetText}>
-            {total} / {budget}円
+            {wasteTotal} / {budget}円
           </div>
 
           <div style={budgetBarBg}>
             <div
               style={{
                 ...budgetBar,
-                width: `${budget ? Math.min((total / budget) * 100, 100) : 0}%`,
+                width: `${budget ? Math.min((wasteTotal / budget) * 100, 100) : 0}%`,
                 background:
-                  total > budget ? "#ef4444" : "#22c55e"
+                  wasteTotal > budget ? "#ef4444" : "#22c55e"
               }}
             />
           </div>
@@ -433,7 +435,7 @@ const budgetText = {
 
 const budgetBarBg = {
   width: "100%",
-  height: "8px",
+  height: "10px",
   background: "#eee",
   borderRadius: "6px",
   overflow: "hidden"

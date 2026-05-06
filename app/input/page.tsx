@@ -184,7 +184,7 @@ export default function InputPage() {
 
       {/* 予算設定 */}
       <div style={card}>
-        <h3>💰 今月の予算</h3>
+        <h3>💰 今月のゆるみ予算</h3>
         <input
           type="number"
           value={budget}
