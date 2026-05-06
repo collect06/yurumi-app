@@ -66,8 +66,8 @@ export default function InputPage() {
       // 固定費をexpensesに反映
       for (const f of fixed || []) {
         // 月条件
-        if (f.start_month && f.start_month > month) continue
-        if (f.end_month && f.end_month <= month) continue
+        if (/*f.start_month &&*/ f.start_month > month) continue
+        if (/*f.end_month &&*/ f.end_month <= month) continue
         
         const { data: existing } = await supabase
           .from("expenses")
