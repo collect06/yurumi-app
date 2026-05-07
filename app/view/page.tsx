@@ -263,7 +263,7 @@ export default function ViewPage() {
             >
               <tspan
                 x="50%"
-                dy="-8"
+                dy="-16"
                 fontSize="13"
                 fill="#666"
               >
@@ -289,7 +289,14 @@ export default function ViewPage() {
       
             <Legend
               verticalAlign="bottom"
-              formatter={(value: any) => String(value)}
+              formatter={(value, entry: any, index) => {
+                const item = grouped[index] as {
+                  name: string
+                  value: number
+                }
+            
+                return `${item.name} (${item.value}円)`
+              }}
             />
       
           </PieChart>
