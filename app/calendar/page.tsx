@@ -264,8 +264,7 @@ export default function CalendarPage() {
                 <div
                   style={{
                     fontSize: "12px",
-                    color: "#666",
-                    marginTop: "2px"
+                    color: "#666"
                   }}
                 >
                   {new Date(e.date).toISOString().split("T")[0]}
