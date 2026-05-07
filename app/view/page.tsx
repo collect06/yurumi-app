@@ -116,17 +116,24 @@ export default function ViewPage() {
     .reduce((sum, e) => sum + e.amount, 0)
   const remaining = budget - wasteTotal
 
-  const grouped = Object.values(
-    expenses.reduce((acc: any, cur) => {
-      const name = cur.category?.name ?? "固定費"
-
-      if (!acc[name]) acc[name] = { name, value: 0 }
-      acc[name].value += cur.amount
-
-      return acc
-    }, {})
-  )
-
+  const grouped =
+    Object.values(
+      expenses.reduce((acc: any, cur) => {
+        const name = cur.category?.name ?? "固定費"
+  
+        if (!acc[name]) {
+          acc[name] = {
+            name,
+            value: 0
+          }
+        }
+  
+        acc[name].value += Number(cur.amount || 0)
+  
+        return acc
+      }, {})
+    ) || []
+  
   const insertFixedCosts = async () => {
 
   // ① fixed_costs取得
@@ -227,18 +234,19 @@ export default function ViewPage() {
         <h3>カテゴリ別グラフ</h3>
       
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <PieChart width={320} height={320}>
+          <PieChart width={340} height={340}>
       
             <Pie
               data={grouped}
               dataKey="value"
               nameKey="name"
-              outerRadius={100}
-              innerRadius={60}
+              cx="50%"
+              cy="50%"
+              innerRadius={70}
+              outerRadius={105}
               paddingAngle={2}
-              label={false}
             >
-              {grouped.map((_, index) => (
+              {grouped.map((_: any, index: number) => (
                 <Cell
                   key={index}
                   fill={COLORS[index % COLORS.length]}
@@ -249,42 +257,57 @@ export default function ViewPage() {
             {/* 中央テキスト */}
             <text
               x="50%"
-              y="46%"
+              y="50%"
               textAnchor="middle"
               dominantBaseline="middle"
-              style={{
-                fontSize: 12,
-                fill: "#666"
-              }}
             >
-              総支出
+              <tspan
+                x="50%"
+                dy="-8"
+                fontSize="13"
+                fill="#666"
+              >
+                総支出
+              </tspan>
+      
+              <tspan
+                x="50%"
+                dy="24"
+                fontSize="24"
+                fontWeight="bold"
+                fill="#222"
+              >
+                {total}円
+              </tspan>
             </text>
       
-            <text
-              x="50%"
-              y="54%"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                fill: "#111"
-              }}
-            >
-              {total}円
-            </text>
-      
-            <Tooltip />
+            <Tooltip
+              formatter={(value: any, name: any) =>
+                [`${value}円`, name]
+              }
+            />
       
             <Legend
               verticalAlign="bottom"
-              formatter={(value, entry: any, index) => {
-                const item = grouped[index] as { name: string; value: number }
-                return `${item.name} (${item.value}円)`
-              }}
+              formatter={(value: any) => String(value)}
             />
+      
           </PieChart>
         </div>
+      
+        {/* データ0件時 */}
+        {grouped.length === 0 && (
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "-120px",
+              color: "#888",
+              fontSize: "14px"
+            }}
+          >
+            データなし
+          </div>
+        )}
       </div>
 
       <select
