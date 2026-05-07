@@ -399,7 +399,8 @@ export default function ViewPage() {
             <div>
               <div>{e.amount}円 [{e.category?.name ?? "固定費"}]</div>
               <div style={{ fontSize: "12px", color: "#666" }}>
-                {new Date(e.date).toISOString().split("T")[0]}：{e.memo}
+                {new Date(e.date).toISOString().split("T")[0]}
+                {e.memo ? `：${e.memo}` : ""}
               </div>
             </div>
 
@@ -443,7 +444,6 @@ export default function ViewPage() {
                     }}
                 type="date"
                 value={editDate}
-                placeholder="メモ"
                 onChange={(e) => setEditDate(e.target.value)}
               />
               
@@ -451,6 +451,7 @@ export default function ViewPage() {
                 style={input}
                 type="text"
                 value={editMemo}
+                placeholder="メモ"
                 onChange={(ev) => setEditMemo(ev.target.value)}
               />
               <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "6px" }}>

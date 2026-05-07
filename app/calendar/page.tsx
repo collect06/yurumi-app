@@ -309,13 +309,13 @@ export default function CalendarPage() {
                     }}
                     type="date"
                     value={editDate}
-                    placeholder="メモ"
                     onChange={(ev) => setEditDate(ev.target.value)}
                   />
                   <input
                     style={input}
                     type="text"
                     value={editMemo}
+                    placeholder="メモ"
                     onChange={(e) => setEditMemo(e.target.value)}
                   />
                   <button
