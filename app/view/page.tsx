@@ -5,7 +5,18 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts"
 import Header from "../components/Header"
 import { CSSProperties } from "react"
 
-const COLORS = ["#4CAF50", "#2196F3", "#FF9800", "#E91E63", "#9C27B0"]
+const COLORS = [
+  "#4CAF50",
+  "#2196F3",
+  "#FF9800",
+  "#E91E63",
+  "#9C27B0",
+  "#14b8a6",
+  "#f59e0b",
+  "#6366f1",
+  "#ec4899",
+  "#84cc16"
+]
 
 export default function ViewPage() {
   const now = new Date()
@@ -209,25 +220,70 @@ export default function ViewPage() {
         </div>
       </div>
 
-      <div style={card}>
+      <div style={{
+        ...card,
+        paddingBottom: 30
+      }}>
         <h3>カテゴリ別グラフ</h3>
+      
         <div style={{ display: "flex", justifyContent: "center" }}>
-        <PieChart width={320} height={320}>
-          <Pie
-            data={grouped}
-            dataKey="value"
-            nameKey="name"
-            outerRadius={85}
-            labelLine={false}
-            label={({ name, value }) => `${name}:${value}`}
-          >
-            {grouped.map((_, index) => (
-              <Cell key={index} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend verticalAlign="bottom" />
-        </PieChart>
+          <PieChart width={320} height={320}>
+      
+            <Pie
+              data={grouped}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={100}
+              innerRadius={60}
+              paddingAngle={2}
+              label={false}
+            >
+              {grouped.map((_, index) => (
+                <Cell
+                  key={index}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+      
+            {/* 中央テキスト */}
+            <text
+              x="50%"
+              y="46%"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              style={{
+                fontSize: 12,
+                fill: "#666"
+              }}
+            >
+              総支出
+            </text>
+      
+            <text
+              x="50%"
+              y="54%"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                fill: "#111"
+              }}
+            >
+              {total}円
+            </text>
+      
+            <Tooltip />
+      
+            <Legend
+              verticalAlign="bottom"
+              formatter={(value, entry: any, index) => {
+                const item = grouped[index]
+                return `${item.name} (${item.value}円)`
+              }}
+            />
+          </PieChart>
         </div>
       </div>
 
