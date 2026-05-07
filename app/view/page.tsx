@@ -132,7 +132,7 @@ export default function ViewPage() {
   
         return acc
       }, {})
-    ) || []
+    ).sort((a: any, b: any) => b.value - a.value)
   
   const insertFixedCosts = async () => {
 
@@ -233,8 +233,14 @@ export default function ViewPage() {
       }}>
         <h3>カテゴリ別グラフ</h3>
       
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <PieChart width={340} height={340}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+          }}
+        >
+          <PieChart width={320} height={260}>
       
             <Pie
               data={grouped}
@@ -246,63 +252,83 @@ export default function ViewPage() {
               outerRadius={105}
               paddingAngle={2}
             >
-              {grouped.map((entry: any, index) => (
+              {grouped.map((entry: any, index: number) => (
                 <Cell
-                  key={index}
+                  key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
                 />
               ))}
             </Pie>
+
+            <Tooltip
+              formatter={(value: any) => `${value}円`}
+            />
       
             {/* 中央テキスト */}
               <text
                 x="50%"
-                y="50%"
+                y="46%"
                 textAnchor="middle"
+                dominantBaseline="middle"
                 style={{
-                  fontSize: 12,
+                  fontSize: 14,
                   fill: "#666"
                 }}
-                dy="-12"
               >
                 総支出
               </text>
       
               <text
                 x="50%"
-                y="50%"
+                y="56%"
                 textAnchor="middle"
                 dominantBaseline="middle"
                 style={{
-                  fontSize: 22,
+                  fontSize: 28,
                   fontWeight: "bold",
                   fill: "#111"
                 }}
-                dy="26"
               >
                 {total}円
               </text>
+            </PieChart>
       
-            <Tooltip
-              formatter={(value: any, name: any) =>
-                [`${value}円`, name]
-              }
-            />
-      
-            <Legend
-              verticalAlign="bottom"
-              formatter={(value, entry: any, index) => {
-                const item = grouped[index] as {
-                  name: string
-                  value: number
-                }
-            
-                return `${item.name} (${item.value}円)`
-              }}
-            />
-      
-          </PieChart>
-        </div>
+           
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: "10px",
+              marginTop: "-10px"
+            }}
+          >
+            {grouped.map((entry: any, index: number) => (
+              <div
+                key={entry.name}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  color: COLORS[index % COLORS.length],
+                  fontSize: "14px"
+                }}
+              >
+                <div
+                  style={{
+                    width: 12,
+                    height: 12,
+                    background: COLORS[index % COLORS.length],
+                    borderRadius: 2
+                  }}
+                />
+
+                <span>
+                  {entry.name} ({entry.value}円)
+                </span>
+              </div>
+            ))}
+          </div>
       
         {/* データ0件時 */}
         {grouped.length === 0 && (
@@ -317,6 +343,7 @@ export default function ViewPage() {
             データなし
           </div>
         )}
+      </div>
       </div>
 
       <select
