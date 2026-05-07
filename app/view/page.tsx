@@ -257,29 +257,30 @@ export default function ViewPage() {
             {/* 中央テキスト */}
             <text
               x="50%"
-              y="50%"
+              y="44%"
               textAnchor="middle"
               dominantBaseline="middle"
+              style={{
+                fontSize: 12,
+                fill: "#666"
+              }}
             >
-              <tspan
-                x="50%"
-                dy="-16"
-                fontSize="13"
-                fill="#666"
-              >
                 総支出
-              </tspan>
+              </text>
       
-              <tspan
+              <text
                 x="50%"
-                dy="24"
-                fontSize="24"
-                fontWeight="bold"
-                fill="#222"
+                y="51%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  fill: "#111"
+                }}
               >
                 {total}円
-              </tspan>
-            </text>
+              </text>
       
             <Tooltip
               formatter={(value: any, name: any) =>
