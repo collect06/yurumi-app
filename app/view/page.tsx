@@ -117,36 +117,59 @@ export default function ViewPage() {
   )
 
   const insertFixedCosts = async () => {
-    const { data: fixed } = await supabase.from("fixed_costs").select("*")
 
-    for (const f of fixed || []) {
-      // 対象月チェック
-      if (month < f.start_month) continue
-      if (/*f.end_month &&*/ month >= f.end_month) continue
-      
-      /*const { data: existing } = await supabase
+  // ① fixed_costs取得
+  const { data: fixed } = await supabase
+    .from("fixed_costs")
+    .select("*")
+
+  // ② 今月有効なfixed_cost_id一覧
+  const validIds = (fixed || [])
+    .filter(f => {
+      if (month < f.start_month) return false
+      if (f.end_month && month >= f.end_month) return false
+      return true
+    })
+    .map(f => f.id)
+
+  // ③ 今月の固定費expenses取得
+  const { data: currentFixedExpenses } = await supabase
+    .from("expenses")
+    .select("*")
+    .eq("month", month)
+    .eq("is_fixed", true)
+
+  // ④ 不要固定費削除
+  for (const e of currentFixedExpenses || []) {
+    if (!validIds.includes(e.fixed_cost_id)) {
+      await supabase
         .from("expenses")
-        .select("id")
-        .eq("month", month)
-        .eq("fixed_cost_id", f.id)*/
-
-      //if (!existing || existing.length === 0) {
-        await supabase.from("expenses").upsert({
-          amount: f.amount,
-          memo: f.name,
-          month,
-          is_waste: false,
-          is_fixed: true,
-          fixed_cost_id: f.id,
-          category_id: null,
-          date: `${month}-01`
-        },{
-          onConflict: "month,fixed_cost_id"
-        })
-      //}
+        .delete()
+        .eq("id", e.id)
     }
   }
 
+  // ⑤ 必要固定費をupsert
+  for (const f of fixed || []) {
+
+    // 対象月チェック
+    if (month < f.start_month) continue
+    if (f.end_month && month >= f.end_month) continue
+
+    await supabase.from("expenses").upsert({
+      amount: f.amount,
+      memo: f.name,
+      month,
+      is_waste: false,
+      is_fixed: true,
+      fixed_cost_id: f.id,
+      category_id: null,
+      date: `${month}-01`
+    }, {
+      onConflict: "month,fixed_cost_id"
+    })
+  }
+}
   const filteredExpenses = targetExpenses
     .filter((e) => {
       if (showWasteOnly && !e.is_waste) return false
