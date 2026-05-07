@@ -261,8 +261,15 @@ export default function CalendarPage() {
             <div key={e.id} style={expenseRow}>
               <div>
                 <div>{e.amount}円</div>
-                <div style={{ fontSize: "12px", color: "#666" }}>
-                  {e.memo}
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#666",
+                    marginTop: "2px"
+                  }}
+                >
+                  {new Date(e.date).toISOString().split("T")[0]}
+                  {e.memo ? `：${e.memo}` : ""}
                 </div>
               </div>
 
@@ -296,9 +303,13 @@ export default function CalendarPage() {
                     onChange={(e) => setEditAmount(e.target.value)}
                   />
                   <input
-                    style={input}
+                    style={{
+                      ...input,
+                      appearance: "none"
+                    }}
                     type="date"
                     value={editDate}
+                    placeholder="メモ"
                     onChange={(ev) => setEditDate(ev.target.value)}
                   />
                   <input
@@ -420,7 +431,10 @@ const input = {
   marginTop: "4px",
   padding: "6px",
   borderRadius: "6px",
-  border: "1px solid #ccc"
+  border: "1px solid #ccc",
+  boxSizing: "border-box" as const,
+  fontSize: "16px",
+  background: "white"
 }
 
 const budgetBox = {

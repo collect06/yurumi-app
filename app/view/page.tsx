@@ -437,9 +437,13 @@ export default function ViewPage() {
               />
 
               <input
-                style={input}
+                style={{
+                  ...input,
+                  appearance: "none"
+                    }}
                 type="date"
                 value={editDate}
+                placeholder="メモ"
                 onChange={(e) => setEditDate(e.target.value)}
               />
               
@@ -493,9 +497,13 @@ const card: CSSProperties = {
 
 const input = {
   width: "100%",
-  padding: 8,
-  borderRadius: 5,
+  marginTop: "4px",
+  padding: "6px",
+  borderRadius: "6px",
   border: "1px solid #ccc",
+  boxSizing: "border-box" as const,
+  fontSize: "16px",
+  background: "white"
 }
 
 const listItem = {
