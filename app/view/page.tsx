@@ -279,7 +279,7 @@ export default function ViewPage() {
             <Legend
               verticalAlign="bottom"
               formatter={(value, entry: any, index) => {
-                const item = grouped[index]
+                const item = grouped[index] as { name: string; value: number }
                 return `${item.name} (${item.value}円)`
               }}
             />
