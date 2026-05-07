@@ -246,7 +246,7 @@ export default function ViewPage() {
               outerRadius={105}
               paddingAngle={2}
             >
-              {grouped.map((_: any, index: number) => (
+              {grouped.map((entry: any, index) => (
                 <Cell
                   key={index}
                   fill={COLORS[index % COLORS.length]}
@@ -255,22 +255,22 @@ export default function ViewPage() {
             </Pie>
       
             {/* 中央テキスト */}
-            <text
-              x="50%"
-              y="44%"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              style={{
-                fontSize: 12,
-                fill: "#666"
-              }}
-            >
+              <text
+                x="50%"
+                y="50%"
+                textAnchor="middle"
+                style={{
+                  fontSize: 12,
+                  fill: "#666"
+                }}
+                dy="-12"
+              >
                 総支出
               </text>
       
               <text
                 x="50%"
-                y="51%"
+                y="50%"
                 textAnchor="middle"
                 dominantBaseline="middle"
                 style={{
@@ -278,6 +278,7 @@ export default function ViewPage() {
                   fontWeight: "bold",
                   fill: "#111"
                 }}
+                dy="26"
               >
                 {total}円
               </text>
