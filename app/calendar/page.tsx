@@ -31,7 +31,7 @@ export default function CalendarPage() {
   const fetchData = async () => {
     const { data } = await supabase
       .from("expenses")
-      .select("*")
+      .select(`*,category:categories(id,name)`)
       .eq("month", month)
 
     if (data) setExpenses(data)
