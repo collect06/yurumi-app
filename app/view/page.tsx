@@ -30,6 +30,8 @@ export default function ViewPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editAmount, setEditAmount] = useState("")
   const [editMemo, setEditMemo] = useState("")
+　const [editDate, setEditDate] = useState("")
+  const [editCategoryId, setEditCategoryId] = useState<number | "">("")
   
   const [filterCategoryId, setFilterCategoryId] = useState<number | "all">("all")
   
@@ -39,8 +41,6 @@ export default function ViewPage() {
   const [categories, setCategories] = useState<any[]>([])
 
   const targetExpenses = expenses.filter(e => !e.is_fixed)
-
-  const [editDate, setEditDate] = useState("")
 
   useEffect(() => {
     const init = async () => {
@@ -91,6 +91,7 @@ export default function ViewPage() {
       .from("expenses")
       .update({
         amount: Number(editAmount),
+        category_id: editCategoryId || null,
         memo: editMemo,
         date: editDate,
         month: editDate.slice(0, 7)
@@ -411,6 +412,7 @@ export default function ViewPage() {
                 onClick={() => {
                   setEditingId(e.id)
                   setEditAmount(String(e.amount))
+                  setEditCategoryId(e.category_id || "")
                   setEditMemo(e.memo || "")
                   setEditDate(e.date)
                 }}
@@ -434,8 +436,27 @@ export default function ViewPage() {
                 style={input}
                 type="number"
                 value={editAmount}
+                placeholder="金額"
                 onChange={(ev) => setEditAmount(ev.target.value)}
               />
+
+              <select
+                style={input}
+                value={editCategoryId}
+                onChange={(e) =>
+                  setEditCategoryId(
+                    e.target.value ? Number(e.target.value) : ""
+                  )
+                }
+              >
+                <option value="">カテゴリなし</option>
+              
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
 
               <input
                 style={{
