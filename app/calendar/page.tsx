@@ -272,7 +272,7 @@ export default function CalendarPage() {
           {selectedExpenses.map((e) => (
             <div key={e.id} style={expenseRow}>
               <div>
-                <div>{e.amount}円</div>
+                <div>{e.amount}円 [{e.category?.name ?? "固定費"}]</div>
                 <div
                   style={{
                     fontSize: "12px",
