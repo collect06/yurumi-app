@@ -16,6 +16,7 @@ export default function CalendarPage() {
   const [editDate, setEditDate] = useState("")
   const [editMemo, setEditMemo] = useState("")
   const [editCategoryId, setEditCategoryId] = useState<number | "">("")
+  const [categories, setCategories] = useState<any[]>([])
   
   const [fade, setFade] = useState(true)
   const [direction, setDirection] = useState(0)
@@ -24,6 +25,7 @@ export default function CalendarPage() {
 
   useEffect(() => {
     fetchData()
+    fetchCategories()
   }, [month])
 
   const fetchData = async () => {
@@ -45,6 +47,14 @@ export default function CalendarPage() {
     } else {
       setBudget(0)
     }
+  }
+
+  const fetchCategories = async () => {
+    const { data } = await supabase
+      .from("categories")
+      .select("*")
+  
+    if (data) setCategories(data)
   }
 
   // ===== 月移動 =====
