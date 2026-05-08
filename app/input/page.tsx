@@ -247,7 +247,10 @@ export default function InputPage() {
         <div style={field}>
           <div style={fieldInner}>
             <input
-              style={inputStyle}
+              style={{
+                ...inputStyle,
+                appearance: "none"
+                }}
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -333,7 +336,8 @@ const inputStyle : CSSProperties = {
   borderRadius: "6px",
   border: "1px solid #ccc",
   marginBottom: "8px",
-  width: "100%"
+  width: "100%",
+  boxSizing: "border-box" as const
 }
 
 const buttonStyle = {
