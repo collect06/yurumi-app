@@ -448,9 +448,7 @@ export default function ViewPage() {
                     e.target.value ? Number(e.target.value) : ""
                   )
                 }
-              >
-                <option value="">カテゴリなし</option>
-              
+              >              
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
