@@ -217,49 +217,41 @@ export default function InputPage() {
 
         <div style={field}>
           <div style={fieldInner}>
-            <div style={selectWrap}>
-              <select
-                value={isWaste ? "true" : "false"}
-                onChange={(e) => setIsWaste(e.target.value === "true")}
-                style={input}
-              >
-                <option value="false">通常支出</option>
-                <option value="true">無駄支出</option>
-              </select>
-              <span style={selectArrow}>▼</span>
-            </div>
+            <select
+              value={isWaste ? "true" : "false"}
+              onChange={(e) => setIsWaste(e.target.value === "true")}
+              style={input}
+            >
+              <option value="false">通常支出</option>
+              <option value="true">無駄支出</option>
+            </select>
           </div>
         </div>
 
         <div style={field}>
           <div style={fieldInner}>
-            <div style={selectWrap}>
-              <select
-                value={categoryId ?? ""}
-                onChange={(e) => setCategoryId(Number(e.target.value))}
-                style={input}
-              >
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-              <span style={selectArrow}>▼</span>
-            </div>
+            <select
+              value={categoryId ?? ""}
+              onChange={(e) => setCategoryId(Number(e.target.value))}
+              style={input}
+            >
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
         <div style={field}>
           <div style={fieldInner}>
-            <div style={selectWrap}>
-              <input
-                style={inputStyle}
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </div>
+            <input
+              style={inputStyle}
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
           </div>
         </div>
 
@@ -341,9 +333,7 @@ const inputStyle : CSSProperties = {
   borderRadius: "6px",
   border: "1px solid #ccc",
   marginBottom: "8px",
-  width: "100%",
-  appearance: "none",
-  WebkitAppearance: "none"
+  width: "100%"
 }
 
 const buttonStyle = {
@@ -383,8 +373,7 @@ const input: CSSProperties = {
   borderRadius: 8,
   border: "1px solid #ddd",
   fontSize: 16,
-  boxSizing: "border-box", // ← これが超重要
-  appearance: "none" // ← selectのズレ防止
+  boxSizing: "border-box" // ← これが超重要
 }
 
 const primaryButton = {
@@ -430,10 +419,6 @@ const field = {
 const fieldInner = {
   maxWidth: 420,
   margin: "0 auto"
-}
-
-const selectWrap = {
-  position: "relative" as const
 }
 
 const selectArrow : CSSProperties = {
