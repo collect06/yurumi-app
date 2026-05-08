@@ -15,6 +15,7 @@ export default function CalendarPage() {
   const [editAmount, setEditAmount] = useState("")
   const [editDate, setEditDate] = useState("")
   const [editMemo, setEditMemo] = useState("")
+  const [editCategoryId, setEditCategoryId] = useState<number | "">("")
   
   const [fade, setFade] = useState(true)
   const [direction, setDirection] = useState(0)
@@ -117,6 +118,7 @@ export default function CalendarPage() {
       .from("expenses")
       .update({
         amount: Number(editAmount),
+        category_id: editCategoryId || null,
         date: editDate,
         memo: editMemo,
         month: editDate.slice(0, 7)
@@ -278,6 +280,7 @@ export default function CalendarPage() {
                   onClick={() => {
                     setEditingId(e.id)
                     setEditAmount(String(e.amount))
+                    setEditCategoryId(e.category_id || "")
                     setEditDate(e.date ?? "")
                     setEditMemo(e.memo || "")
                   }}
@@ -299,8 +302,24 @@ export default function CalendarPage() {
                     style={input}
                     type="number"
                     value={editAmount}
+                    placeholder="金額"
                     onChange={(e) => setEditAmount(e.target.value)}
                   />
+                  <select
+                    style={input}
+                    value={editCategoryId}
+                    onChange={(e) =>
+                      setEditCategoryId(
+                        e.target.value ? Number(e.target.value) : ""
+                      )
+                    }
+                  >
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
                   <input
                     style={{
                       ...input,
