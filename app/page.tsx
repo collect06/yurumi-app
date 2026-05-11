@@ -5,9 +5,27 @@ import InputPage from "./input/page"
 import ViewPage from "./view/page"
 import CalendarPage from "./calendar/page"
 import { CSSProperties } from "react"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabase"
 
 export default function Home() {
   const [tab, setTab] = useState("input")
+  const router = useRouter()
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push("/login")
+      }
+    }
+
+    checkUser()
+  }, [])
 
   return (
     <div style={{ paddingBottom: "100px"}}>
