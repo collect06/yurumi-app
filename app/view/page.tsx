@@ -50,7 +50,10 @@ export default function ViewPage() {
         data: { user }
       } = await supabase.auth.getUser()
   
-      if (!user) return
+      if (!user) {
+        router.push("/login")
+        return
+      }
   
       setUserId(userId)
   
