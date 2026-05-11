@@ -60,7 +60,7 @@ export default function SettingsPage() {
     })
 
     setNewCategory("")
-    fetchCategories()
+    fetchCategories(userId)
   }
 
   const updateCategory = async (id: number) => {
@@ -71,7 +71,7 @@ export default function SettingsPage() {
       .eq("user_id", userId)
 
     setEditingId(null)
-    fetchCategories()
+    fetchCategories(userId)
   }
 
   const deleteCategory = async (id: number) => {
@@ -83,7 +83,7 @@ export default function SettingsPage() {
       .eq("id", id)
       .eq("user_id", userId)
 
-    fetchCategories()
+    fetchCategories(userId)
   }
 
   const move = async (index: number, direction: number) => {
@@ -101,7 +101,7 @@ export default function SettingsPage() {
       }).eq("id", swap.id).eq("user_id", userId)
     ])
 
-    await fetchCategories()
+    await fetchCategories(userId)
   }
 
   const saveEdit = async (id: number) => {
@@ -123,7 +123,7 @@ export default function SettingsPage() {
   
     setEditingId(null)
     setEditName("")
-    fetchCategories()
+    fetchCategories(userId)
   }
 
   return (
