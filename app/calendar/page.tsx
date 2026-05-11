@@ -137,7 +137,7 @@ export default function CalendarPage() {
   const deleteExpense = async (id: number) => {
      if (!confirm("削除しますか？")) return
     await supabase.from("expenses").delete().eq("id", id).eq("user_id", userId)
-    fetchData()
+    fetchData(userId)
   }
 
   const updateExpense = async (id: number) => {
@@ -155,7 +155,7 @@ export default function CalendarPage() {
       .eq("user_id", userId)
 
     setEditingId(null)
-    fetchData()
+    fetchData(userId)
   }
 
   // 月合計
