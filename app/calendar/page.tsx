@@ -23,16 +23,31 @@ export default function CalendarPage() {
 
   const [budget, setBudget] = useState(0)
 
+  const [userId, setUserId] = useState("")
+
   useEffect(() => {
-    fetchData()
-    fetchCategories()
+    const init = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
+  
+      if (!user) return
+  
+      setUserId(user.id)
+  
+      fetchData(user.id)
+      fetchCategories(user.id)
+    }
+  
+    init()
   }, [month])
 
-  const fetchData = async () => {
+  const fetchData = async (userId: string) => {
     const { data } = await supabase
       .from("expenses")
       .select(`*,category:categories(id,name)`)
       .eq("month", month)
+      .eq("user_id", userId)
 
     if (data) setExpenses(data)
     
@@ -40,6 +55,7 @@ export default function CalendarPage() {
       .from("budgets")
       .select("*")
       .eq("month", month)
+      .eq("user_id", userId)
       .single()
 
     if (budgetData) {
@@ -49,10 +65,11 @@ export default function CalendarPage() {
     }
   }
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (userId: string) => {
     const { data } = await supabase
       .from("categories")
       .select("*")
+      .eq("user_id", userId)
   
     if (data) setCategories(data)
   }
@@ -119,7 +136,7 @@ export default function CalendarPage() {
 
   const deleteExpense = async (id: number) => {
      if (!confirm("削除しますか？")) return
-    await supabase.from("expenses").delete().eq("id", id)
+    await supabase.from("expenses").delete().eq("id", id).eq("user_id", userId)
     fetchData()
   }
 
@@ -131,9 +148,11 @@ export default function CalendarPage() {
         category_id: editCategoryId || null,
         date: editDate,
         memo: editMemo,
-        month: editDate.slice(0, 7)
+        month: editDate.slice(0, 7),
+        user_id: userId
       })
       .eq("id", id)
+      .eq("user_id", userId)
 
     setEditingId(null)
     fetchData()
