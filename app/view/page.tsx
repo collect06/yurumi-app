@@ -46,12 +46,20 @@ export default function ViewPage() {
 
   useEffect(() => {
     const init = async () => {
-      await insertFixedCosts()
-      await fetchData()
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
+  
+      if (!user) return
+  
+      setUserId(userId)
+  
+      await insertFixedCosts(userId)
+      await fetchData(userId)
+      await fetchCategories(userId)
     }
-
+  
     init()
-    fetchCategories()
   }, [month])
 
   const fetchCategories = async (userId: string) => {
@@ -122,7 +130,7 @@ export default function ViewPage() {
       .eq("user_id", userId)
 
     setEditingId(null)
-    fetchData()
+    fetchData(userId)
   }
 
   // ✅ 削除機能
@@ -131,7 +139,7 @@ export default function ViewPage() {
 
     await supabase.from("expenses").delete().eq("id", id).eq("user_id", userId)
 
-    fetchData()
+    fetchData(userId)
   }
 
   const total = expenses.reduce((sum, e) => sum + e.amount, 0)
