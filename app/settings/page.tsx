@@ -11,17 +11,29 @@ export default function SettingsPage() {
   const [newCategory, setNewCategory] = useState("")
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState("")
+  const [userId, setUserId] = useState("")
 
   useEffect(() => {
-    fetchCategories()
+    const init = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
+  
+      if (!user) return
+  
+      setUserId(user.id)
+      fetchCategories(user.id)
+    }
+  
+    init()
   }, [])
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (userId: string) => {
     const { data } = await supabase
       .from("categories")
       .select("*")
-      .is("is_active", true)
-      .eq("user_id", uid)
+      .eq("is_active", true)
+      .eq("user_id", userId)
       .order("sort_order", { ascending: true })
 
     if (data) setCategories(data)
@@ -33,7 +45,7 @@ export default function SettingsPage() {
     const { data: max } = await supabase
       .from("categories")
       .select("sort_order")
-      .eq("user_id", uid)
+      .eq("user_id", userId)
       .order("sort_order", { ascending: false })
       .limit(1)
       .single()
@@ -56,7 +68,7 @@ export default function SettingsPage() {
       .from("categories")
       .update({ name: editName })
       .eq("id", id)
-      .eq("user_id", uid)
+      .eq("user_id", userId)
 
     setEditingId(null)
     fetchCategories()
@@ -69,7 +81,7 @@ export default function SettingsPage() {
       .from("categories")
       .update({ deleted_at: new Date().toISOString() })
       .eq("id", id)
-      .eq("user_id", uid)
+      .eq("user_id", userId)
 
     fetchCategories()
   }
@@ -82,11 +94,11 @@ export default function SettingsPage() {
     await Promise.all([
       supabase.from("categories").update({
         sort_order: swap.sort_order
-      }).eq("id", target.id).eq("user_id", uid),
+      }).eq("id", target.id).eq("user_id", userId),
     
       supabase.from("categories").update({
         sort_order: target.sort_order
-      }).eq("id", swap.id).eq("user_id", uid)
+      }).eq("id", swap.id).eq("user_id", userId)
     ])
 
     await fetchCategories()
@@ -99,7 +111,7 @@ export default function SettingsPage() {
       .from("categories")
       .update({ name: editName })
       .eq("id", id)
-      .eq("user_id", uid)
+      .eq("user_id", userId)
   
     if (error) {
       console.error(error)
