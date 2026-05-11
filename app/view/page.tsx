@@ -4,6 +4,7 @@ import { supabase } from "../../lib/supabase"
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts"
 import Header from "../components/Header"
 import { CSSProperties } from "react"
+import { useRouter } from "next/navigation"
 
 const COLORS = [
   "#4CAF50",
@@ -19,6 +20,7 @@ const COLORS = [
 ]
 
 export default function ViewPage() {
+  const router = useRouter()
   const now = new Date()
   const defaultMonth = `${now.getFullYear()}-${String(
     now.getMonth() + 1
