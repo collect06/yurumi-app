@@ -33,11 +33,19 @@ export default function InputPage() {
   }, [month])
 
   const fetchAll = async () => {
-      // 予算
+
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+  
+    if (!user) return
+      
+    // 予算
       const { data: budgetData } = await supabase
         .from("budgets")
         .select("*")
         .eq("month", month)
+        .eq("user_id", user.id)
         .single()
 
       if (budgetData) setBudget(String(budgetData.amount))
@@ -48,6 +56,7 @@ export default function InputPage() {
         .from("categories")
         .select("*")
         .eq("is_active", true)
+        .eq("user_id", user.id)
         .order("sort_order", { ascending: true })
 
       if (catData) {
@@ -59,6 +68,7 @@ export default function InputPage() {
       const { data: fixed } = await supabase
         .from("fixed_costs")
         .select("*")
+        .eq("user_id", user.id)
         .is("end_month", null)
 
       setFixedCosts(fixed || [])
@@ -74,6 +84,7 @@ export default function InputPage() {
           .select("id")
           .eq("month", month)
           .eq("fixed_cost_id", f.id)
+          .eq("user_id", user.id)
 
         if (!existing || existing.length === 0) {
           await supabase.from("expenses").upsert({
@@ -84,7 +95,8 @@ export default function InputPage() {
             is_fixed: true,
             date: `${month}-01`,
             category_id: null,
-            fixed_cost_id: f.id
+            fixed_cost_id: f.id,
+            user_id: user.id
           }, {
             onConflict: "month,fixed_cost_id"
           })
@@ -94,15 +106,31 @@ export default function InputPage() {
 
   // 予算保存
   const saveBudget = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
+      
+      if (!user) return
+    
     await supabase
       .from("budgets")
-      .upsert({ month, amount: Number(budget) }, { onConflict: "month" })
+      .upsert({ 
+        month, 
+        amount: Number(budget),
+        user_id: user.id
+      }, { onConflict: "user_id,month" })
 
     alert("予算を保存しました")
   }
 
   // 支出追加
   const addExpense = async () => {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+    
+    if (!user) return
+    
     if (!amount || !categoryId) return
 
     const { error } = await supabase.from("expenses").insert([
@@ -113,7 +141,8 @@ export default function InputPage() {
         month,
         is_waste: isWaste,
         is_fixed: false,
-        date
+        date,
+        user_id: user.id,
       },
     ])
 
@@ -130,12 +159,19 @@ export default function InputPage() {
 
   // 固定費自動追加
   const addFixedCost = async () => {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+    
+    if (!user) return
+    
     await supabase.from("fixed_costs").insert([
       {
         name: fixedName,
         amount: Number(fixedAmount),
         start_month: month,
-        end_month: null
+        end_month: null,
+        user_id: user.id
       }
     ])
 
@@ -148,11 +184,18 @@ export default function InputPage() {
 
   // 固定費停止
   const stopFixedCost = async (id: number) => {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+    
+    if (!user) return
+    
      if (!confirm("停止しますか？")) return
     await supabase
       .from("fixed_costs")
       .update({ end_month: month })
       .eq("id", id)
+      .eq("user_id", user.id)
 
     alert("固定費を停止しました")
     fetchFixedCosts()
@@ -162,7 +205,9 @@ export default function InputPage() {
     const { data } = await supabase
       .from("fixed_costs")
       .select("*")
+      .eq("user_id", user.id)
       .is("end_month", null)
+      
 
     if (data) setFixedCosts(data)
   }
