@@ -290,7 +290,7 @@ export default function InputPage() {
               style={input}
             >
               <option value="false">通常支出</option>
-              <option value="true">無駄支出</option>
+              <option value="true">ゆるみ支出</option>
             </select>
           </div>
         </div>
