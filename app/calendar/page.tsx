@@ -37,6 +37,8 @@ export default function CalendarPage() {
         router.push("/login")
         return
       }
+
+      const userId = user.id
   
       setUserId(userId)
   
