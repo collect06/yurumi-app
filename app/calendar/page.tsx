@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import Header from "../components/Header"
+import { useRouter } from "next/navigation"
 
 export default function CalendarPage() {
+  const router = useRouter()
   const [expenses, setExpenses] = useState<any[]>([])
   const [month, setMonth] = useState(
     new Date().toISOString().slice(0, 7)
