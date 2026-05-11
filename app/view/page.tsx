@@ -53,15 +53,28 @@ export default function ViewPage() {
   }, [month])
 
   const fetchCategories = async () => {
-    const { data } = await supabase.from("categories").select("*")
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+    
+    if (!user) return
+    
+    const { data } = await supabase.from("categories").select("*").eq("user_id", user.id)
     if (data) setCategories(data)
   }
 
   const fetchData = async () => {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+    
+    if (!user) return
+    
     const { data } = await supabase
       .from("expenses")
       .select(`*,category:categories(id,name)`)
       .eq("month", month)
+      .eq("user_id", user.id)
 
     if (data) setExpenses(data)
 
@@ -69,6 +82,7 @@ export default function ViewPage() {
       .from("budgets")
       .select("*")
       .eq("month", month)
+      .eq("user_id", user.id)
       .single()
 
     if (budgetData) setBudget(budgetData.amount)
@@ -87,6 +101,12 @@ export default function ViewPage() {
   const normalExpenses = expenses.filter(e => !e.is_fixed)
 
   const updateExpense = async (id: number) => {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+    
+    if (!user) return
+    
     await supabase
       .from("expenses")
       .update({
@@ -97,6 +117,7 @@ export default function ViewPage() {
         month: editDate.slice(0, 7)
       })
       .eq("id", id)
+      .eq("user_id", user.id)
 
     setEditingId(null)
     fetchData()
@@ -106,7 +127,7 @@ export default function ViewPage() {
   const deleteExpense = async (id: number) => {
     if (!confirm("削除しますか？")) return
 
-    await supabase.from("expenses").delete().eq("id", id)
+    await supabase.from("expenses").delete().eq("id", id).eq("user_id", user.id)
 
     fetchData()
   }
@@ -141,6 +162,7 @@ export default function ViewPage() {
   const { data: fixed } = await supabase
     .from("fixed_costs")
     .select("*")
+    .eq("user_id", user.id)
 
   // ② 今月有効なfixed_cost_id一覧
   const validIds = (fixed || [])
@@ -157,6 +179,7 @@ export default function ViewPage() {
     .select("*")
     .eq("month", month)
     .eq("is_fixed", true)
+    .eq("user_id", user.id)
 
   // ④ 不要固定費削除
   for (const e of currentFixedExpenses || []) {
@@ -165,6 +188,7 @@ export default function ViewPage() {
         .from("expenses")
         .delete()
         .eq("id", e.id)
+        .eq("user_id", user.id)
     }
   }
 
@@ -183,9 +207,10 @@ export default function ViewPage() {
       is_fixed: true,
       fixed_cost_id: f.id,
       category_id: null,
-      date: `${month}-01`
+      date: `${month}-01`,
+      user_id: user.id
     }, {
-      onConflict: "month,fixed_cost_id"
+      onConflict: "user_id,month,fixed_cost_id"
     })
   }
 }
