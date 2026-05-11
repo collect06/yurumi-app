@@ -44,9 +44,10 @@ export default function InputPage() {
         router.push("/login")
         return
       }
+
+      const userId = user.id
   
       setUserId(userId)
-  
       fetchAll(userId)
     }
   
