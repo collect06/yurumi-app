@@ -56,6 +56,8 @@ export default function ViewPage() {
         router.push("/login")
         return
       }
+
+      const userId = user.id
   
       setUserId(userId)
   
