@@ -1,4 +1,3 @@
-```tsx
 "use client"
 
 import { useState } from "react"
@@ -111,4 +110,3 @@ const button = {
   color: "white",
   cursor: "pointer"
 }
-```
