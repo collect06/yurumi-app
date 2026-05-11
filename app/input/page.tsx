@@ -3,8 +3,11 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../lib/supabase"
 import { CSSProperties } from "react"
 import Header from "../components/Header"
+import { useRouter } from "next/navigation"
 
 export default function InputPage() {
+
+  const router = useRouter()
   
   const now = new Date()
   const defaultMonth = `${now.getFullYear()}-${String(
