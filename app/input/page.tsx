@@ -31,12 +31,16 @@ export default function InputPage() {
 
   // 予算取得
   useEffect(() => {
+    
     const init = async () => {
       const {
         data: { user }
       } = await supabase.auth.getUser()
   
-      if (!user) return
+      if (!user) {
+        router.push("/login")
+        return
+      }
   
       setUserId(userId)
   
