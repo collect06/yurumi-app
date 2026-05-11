@@ -42,6 +42,8 @@ export default function ViewPage() {
 
   const targetExpenses = expenses.filter(e => !e.is_fixed)
 
+  const [userId, setUserId] = useState("")
+
   useEffect(() => {
     const init = async () => {
       await insertFixedCosts()
@@ -52,18 +54,18 @@ export default function ViewPage() {
     fetchCategories()
   }, [month])
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (userId: string) => {
     const {
       data: { user }
     } = await supabase.auth.getUser()
     
     if (!user) return
     
-    const { data } = await supabase.from("categories").select("*").eq("user_id", user.id)
+    const { data } = await supabase.from("categories").select("*").eq("user_id", userId)
     if (data) setCategories(data)
   }
 
-  const fetchData = async () => {
+  const fetchData = async (userId: string) => {
     const {
       data: { user }
     } = await supabase.auth.getUser()
@@ -74,7 +76,7 @@ export default function ViewPage() {
       .from("expenses")
       .select(`*,category:categories(id,name)`)
       .eq("month", month)
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
 
     if (data) setExpenses(data)
 
@@ -82,7 +84,7 @@ export default function ViewPage() {
       .from("budgets")
       .select("*")
       .eq("month", month)
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .single()
 
     if (budgetData) setBudget(budgetData.amount)
@@ -117,7 +119,7 @@ export default function ViewPage() {
         month: editDate.slice(0, 7)
       })
       .eq("id", id)
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
 
     setEditingId(null)
     fetchData()
@@ -127,7 +129,7 @@ export default function ViewPage() {
   const deleteExpense = async (id: number) => {
     if (!confirm("削除しますか？")) return
 
-    await supabase.from("expenses").delete().eq("id", id).eq("user_id", user.id)
+    await supabase.from("expenses").delete().eq("id", id).eq("user_id", userId)
 
     fetchData()
   }
@@ -156,13 +158,13 @@ export default function ViewPage() {
       }, {})
     ).sort((a: any, b: any) => b.value - a.value)
   
-  const insertFixedCosts = async () => {
+  const insertFixedCosts = async (userId: string) => {
 
   // ① fixed_costs取得
   const { data: fixed } = await supabase
     .from("fixed_costs")
     .select("*")
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
 
   // ② 今月有効なfixed_cost_id一覧
   const validIds = (fixed || [])
@@ -179,7 +181,7 @@ export default function ViewPage() {
     .select("*")
     .eq("month", month)
     .eq("is_fixed", true)
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
 
   // ④ 不要固定費削除
   for (const e of currentFixedExpenses || []) {
@@ -188,7 +190,7 @@ export default function ViewPage() {
         .from("expenses")
         .delete()
         .eq("id", e.id)
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
     }
   }
 
@@ -208,7 +210,7 @@ export default function ViewPage() {
       fixed_cost_id: f.id,
       category_id: null,
       date: `${month}-01`,
-      user_id: user.id
+      user_id: userId
     }, {
       onConflict: "user_id,month,fixed_cost_id"
     })
