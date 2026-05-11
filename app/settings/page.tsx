@@ -19,7 +19,10 @@ export default function SettingsPage() {
         data: { user }
       } = await supabase.auth.getUser()
   
-      if (!user) return
+      if (!user) {
+        router.push("/login")
+        return
+      }
   
       setUserId(userId)
       fetchCategories(userId)
