@@ -411,7 +411,7 @@ export default function ViewPage() {
           checked={showWasteOnly}
           onChange={(e) => setShowWasteOnly(e.target.checked)}
         />
-        無駄支出のみ
+        ゆるみ支出のみ
       </label>
 
       <select onChange={(e) => setSortOrder(e.target.value)}>
