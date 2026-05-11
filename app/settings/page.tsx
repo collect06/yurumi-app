@@ -85,8 +85,7 @@ export default function SettingsPage() {
     const { error } = await supabase
       .from("categories")
       .update({ 
-        is_active: false,
-        deleted_at: new Date().toISOString()
+        is_active: false
       })
       .eq("id", id)
       .eq("user_id", userId)
@@ -104,19 +103,38 @@ export default function SettingsPage() {
   const move = async (index: number, direction: number) => {
     const target = categories[index]
     const swap = categories[index + direction]
+
     if (!swap) return
 
-    const results = await Promise.all([
-      supabase.from("categories").update({
-        sort_order: swap.sort_order
-      }).eq("id", target.id).eq("user_id", userId),
-    
-      supabase.from("categories").update({
-        sort_order: target.sort_order
-      }).eq("id", swap.id).eq("user_id", userId)
-    ])
+    const result1 = await supabase
+      .from("categories")
+      .update({
+        sort_order: -1
+      })
+      .eq("id", target.id)
+      .eq("user_id", userId)
 
-    console.log(results)
+    console.log(result1)
+
+    const result2 = await supabase
+      .from("categories")
+      .update({
+        sort_order: target.sort_order
+      })
+      .eq("id", swap.id)
+      .eq("user_id", userId)
+
+    console.log(result2)
+
+    const result3 = await supabase
+      .from("categories")
+      .update({
+        sort_order: swap.sort_order
+      })
+      .eq("id", target.id)
+      .eq("user_id", userId)
+
+    console.log(result3)
 
     await fetchCategories(userId)
   }
