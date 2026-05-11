@@ -33,10 +33,10 @@ export default function CalendarPage() {
   
       if (!user) return
   
-      setUserId(user.id)
+      setUserId(userId)
   
-      fetchData(user.id)
-      fetchCategories(user.id)
+      fetchData(userId)
+      fetchCategories(userId)
     }
   
     init()
