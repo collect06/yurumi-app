@@ -21,8 +21,8 @@ export default function SettingsPage() {
   
       if (!user) return
   
-      setUserId(user.id)
-      fetchCategories(user.id)
+      setUserId(userId)
+      fetchCategories(userId)
     }
   
     init()
