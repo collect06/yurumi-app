@@ -40,7 +40,7 @@ export default function InputPage() {
   
       setUserId(userId)
   
-      fetchAll()
+      fetchAll(userId)
     }
   
     init()
@@ -192,8 +192,8 @@ export default function InputPage() {
     alert("固定費を追加しました")
     setFixedName("")
     setFixedAmount("")
-    fetchFixedCosts()
-    await fetchAll()
+    fetchFixedCosts(userId)
+    await fetchAll(userId)
   }
 
   // 固定費停止
@@ -212,7 +212,7 @@ export default function InputPage() {
       .eq("user_id", userId)
 
     alert("固定費を停止しました")
-    fetchFixedCosts()
+    fetchFixedCosts(userId)
   }
 
   const fetchFixedCosts = async (userId: string) => {
