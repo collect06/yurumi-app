@@ -31,10 +31,6 @@ export default function InputPage() {
 
   // 予算取得
   useEffect(() => {
-    fetchAll()
-  }, [month])
-
-  useEffect(() => {
     const init = async () => {
       const {
         data: { user }
