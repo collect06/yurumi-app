@@ -82,7 +82,7 @@ export default function SettingsPage() {
   const deleteCategory = async (id: number) => {
     if (!confirm("削除しますか？")) return
 
-    await supabase
+    const { error } = await supabase
       .from("categories")
       .update({ 
         is_active: false,
@@ -91,15 +91,22 @@ export default function SettingsPage() {
       .eq("id", id)
       .eq("user_id", userId)
 
-    fetchCategories(userId)
-  }
+      console.log(error)
+
+      if (error) {
+        alert(error.message)
+        return
+      }
+
+        fetchCategories(userId)
+      }
 
   const move = async (index: number, direction: number) => {
     const target = categories[index]
     const swap = categories[index + direction]
     if (!swap) return
 
-    await Promise.all([
+    const results = await Promise.all([
       supabase.from("categories").update({
         sort_order: swap.sort_order
       }).eq("id", target.id).eq("user_id", userId),
@@ -108,6 +115,8 @@ export default function SettingsPage() {
         sort_order: target.sort_order
       }).eq("id", swap.id).eq("user_id", userId)
     ])
+
+    console.log(results)
 
     await fetchCategories(userId)
   }
@@ -325,7 +334,7 @@ const editBtn = {
   color: "white",
   border: "none",
   padding: "8px 14px",
-　fontSize: 14,
+  fontSize: 14,
   borderRadius: 8,
   cursor: "pointer"
 }
