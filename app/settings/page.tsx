@@ -84,7 +84,10 @@ export default function SettingsPage() {
 
     await supabase
       .from("categories")
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ 
+        is_active: false,
+        deleted_at: new Date().toISOString()
+      })
       .eq("id", id)
       .eq("user_id", userId)
 
