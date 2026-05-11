@@ -21,6 +21,7 @@ export default function SettingsPage() {
       .from("categories")
       .select("*")
       .is("is_active", true)
+      .eq("user_id", uid)
       .order("sort_order", { ascending: true })
 
     if (data) setCategories(data)
@@ -32,6 +33,7 @@ export default function SettingsPage() {
     const { data: max } = await supabase
       .from("categories")
       .select("sort_order")
+      .eq("user_id", uid)
       .order("sort_order", { ascending: false })
       .limit(1)
       .single()
@@ -41,7 +43,8 @@ export default function SettingsPage() {
     await supabase.from("categories").insert({
       name: newCategory,
       sort_order: nextOrder,
-      is_active: true
+      is_active: true,
+      user_id: userId
     })
 
     setNewCategory("")
@@ -53,6 +56,7 @@ export default function SettingsPage() {
       .from("categories")
       .update({ name: editName })
       .eq("id", id)
+      .eq("user_id", uid)
 
     setEditingId(null)
     fetchCategories()
@@ -65,6 +69,7 @@ export default function SettingsPage() {
       .from("categories")
       .update({ deleted_at: new Date().toISOString() })
       .eq("id", id)
+      .eq("user_id", uid)
 
     fetchCategories()
   }
@@ -77,11 +82,11 @@ export default function SettingsPage() {
     await Promise.all([
       supabase.from("categories").update({
         sort_order: swap.sort_order
-      }).eq("id", target.id),
+      }).eq("id", target.id).eq("user_id", uid),
     
       supabase.from("categories").update({
         sort_order: target.sort_order
-      }).eq("id", swap.id)
+      }).eq("id", swap.id).eq("user_id", uid)
     ])
 
     await fetchCategories()
@@ -94,6 +99,7 @@ export default function SettingsPage() {
       .from("categories")
       .update({ name: editName })
       .eq("id", id)
+      .eq("user_id", uid)
   
     if (error) {
       console.error(error)
