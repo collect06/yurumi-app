@@ -24,6 +24,8 @@ export default function SettingsPage() {
         return
       }
   
+      const userId = user.id
+
       setUserId(userId)
       fetchCategories(userId)
     }
