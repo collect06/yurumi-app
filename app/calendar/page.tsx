@@ -175,7 +175,7 @@ export default function CalendarPage() {
   return (
     <div>
       <Header />
-    <div style={{ padding: "16px", paddingBottom: "100px" }}>
+    <div style={{ padding: "16px"/*, paddingBottom: "100px"*/ }}>
       
       {/* ===== 月ヘッダー ===== */}
       <div style={monthHeader}>

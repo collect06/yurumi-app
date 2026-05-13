@@ -345,7 +345,7 @@ export default function InputPage() {
         </button>
       </div>
 
-      <div style={cardStyle}>
+      <div style={card}>
         <h3>📌 固定費登録</h3>
 
         <input
@@ -369,7 +369,7 @@ export default function InputPage() {
         </button>
       </div>
 
-      <div style={cardStyle}>
+      <div style={card}>
         <h4>登録済み固定費</h4>
 
         {fixedCosts.map((f) => (
@@ -424,7 +424,7 @@ const container = {
   maxWidth: 500,
   margin: "0 auto",
   padding: 20,
-  paddingBottom: "100px"
+  //paddingBottom: "100px"
 }
 
 const header = {

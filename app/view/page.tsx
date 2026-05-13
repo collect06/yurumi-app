@@ -542,7 +542,7 @@ const container = {
   maxWidth: 500,
   margin: "0 auto",
   padding: 20,
-  paddingTop: 90,
+  //paddingTop: 90,
 }
 
 const header = {
