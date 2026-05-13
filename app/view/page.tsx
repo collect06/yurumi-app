@@ -32,7 +32,7 @@ export default function ViewPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editAmount, setEditAmount] = useState("")
   const [editMemo, setEditMemo] = useState("")
-　const [editDate, setEditDate] = useState("")
+  const [editDate, setEditDate] = useState("")
   const [editCategoryId, setEditCategoryId] = useState<number | "">("")
   
   const [filterCategoryId, setFilterCategoryId] = useState<number | "all">("all")
@@ -257,7 +257,10 @@ export default function ViewPage() {
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          style={input}
+          style={{
+            ...input,
+            appearance: "none"
+          }}
         />
 
         <div style={{ marginTop: 15, textAlign: "left" }}>

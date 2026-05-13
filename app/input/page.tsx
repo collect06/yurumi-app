@@ -247,7 +247,10 @@ export default function InputPage() {
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          style={input}
+          style={{
+            ...input,
+            appearance: "none"
+          }}
         />
       </div>
 
