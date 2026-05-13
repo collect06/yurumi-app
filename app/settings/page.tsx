@@ -101,43 +101,55 @@ export default function SettingsPage() {
       }
 
   const move = async (index: number, direction: number) => {
-    const target = categories[index]
-    const swap = categories[index + direction]
+  const target = categories[index]
+  const swap = categories[index + direction]
 
-    if (!swap) return
+  if (!swap) return
 
-    const result1 = await supabase
-      .from("categories")
-      .update({
-        sort_order: -1
-      })
-      .eq("id", target.id)
-      .eq("user_id", userId)
+  // 一時退避
+  const tempOrder = 999999
 
-    console.log(result1)
+  const result1 = await supabase
+    .from("categories")
+    .update({
+      sort_order: tempOrder
+    })
+    .eq("id", target.id)
+    .eq("user_id", userId)
 
-    const result2 = await supabase
-      .from("categories")
-      .update({
-        sort_order: target.sort_order
-      })
-      .eq("id", swap.id)
-      .eq("user_id", userId)
-
-    console.log(result2)
-
-    const result3 = await supabase
-      .from("categories")
-      .update({
-        sort_order: swap.sort_order
-      })
-      .eq("id", target.id)
-      .eq("user_id", userId)
-
-    console.log(result3)
-
-    await fetchCategories(userId)
+  if (result1.error) {
+    alert(result1.error.message)
+    return
   }
+
+  const result2 = await supabase
+    .from("categories")
+    .update({
+      sort_order: target.sort_order
+    })
+    .eq("id", swap.id)
+    .eq("user_id", userId)
+
+  if (result2.error) {
+    alert(result2.error.message)
+    return
+  }
+
+  const result3 = await supabase
+    .from("categories")
+    .update({
+      sort_order: swap.sort_order
+    })
+    .eq("id", target.id)
+    .eq("user_id", userId)
+
+  if (result3.error) {
+    alert(result3.error.message)
+    return
+  }
+
+  await fetchCategories(userId)
+}
 
   const saveEdit = async (id: number) => {
     if (!editName) return
