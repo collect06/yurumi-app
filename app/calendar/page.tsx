@@ -1,5 +1,5 @@
 "use client"
-//
+
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import Header from "../components/Header"
@@ -308,7 +308,7 @@ export default function CalendarPage() {
       {/* ===== 詳細 ===== */}
       {selectedDate && (
         <div style={detailBox}>
-          <h3>{selectedDate} の支出</h3>
+          <h3 style={sectionTitle}>{selectedDate} の支出</h3>
 
           {selectedExpenses.length === 0 && <p>なし</p>}
 
@@ -407,6 +407,12 @@ export default function CalendarPage() {
 }
 
 /* ===== スタイル ===== */
+
+const sectionTitle = {
+  fontSize: 20,
+  fontWeight: "bold",
+  marginBottom: 8
+}
 
 const monthHeader = {
   display: "flex",
