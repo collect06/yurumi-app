@@ -295,7 +295,7 @@ export default function ViewPage() {
         ...card,
         paddingBottom: 30
       }}>
-        <h3>カテゴリ別グラフ</h3>
+        <h3 style={sectionTitle}>カテゴリ別グラフ</h3>
       
         <div
           style={{
@@ -441,7 +441,7 @@ export default function ViewPage() {
       </select>
 
       <div style={card}>
-        <h3>支出一覧</h3>
+        <h3 style={sectionTitle}>支出一覧</h3>
 
         {filteredExpenses.map((e) => (
           <div
