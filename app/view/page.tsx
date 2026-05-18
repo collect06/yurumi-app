@@ -44,6 +44,8 @@ export default function ViewPage() {
 
   const targetExpenses = expenses.filter(e => !e.is_fixed)
 
+  const [loading, setLoading] = useState(true)
+
   const [userId, setUserId] = useState("")
 
   useEffect(() => {
@@ -81,6 +83,7 @@ export default function ViewPage() {
   }
 
   const fetchData = async (userId: string) => {
+    setLoading(true)
     const {
       data: { user }
     } = await supabase.auth.getUser()
@@ -104,6 +107,8 @@ export default function ViewPage() {
 
     if (budgetData) setBudget(budgetData.amount)
     else setBudget(0)
+
+    setLoading(false)
   }
 
   // フィルター使用カテゴリ抽出
@@ -246,6 +251,14 @@ export default function ViewPage() {
         ? new Date(b.date).getTime() - new Date(a.date).getTime()
         : new Date(a.date).getTime() - new Date(b.date).getTime()
     )
+
+  if (loading) {
+    return (
+      <div style={{ padding: 20 }}>
+        読み込み中...
+      </div>
+    )
+  }
 
   return (
     <div>
