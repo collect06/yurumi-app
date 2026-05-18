@@ -257,7 +257,7 @@ export default function InputPage() {
 
       {/* 月選択 */}
       <div style={card}>
-        <h3>📅 月選択</h3>
+        <h3 style={sectionTitle}>📅 月選択</h3>
         <input
           type="month"
           value={month}
@@ -271,7 +271,7 @@ export default function InputPage() {
 
       {/* 予算設定 */}
       <div style={card}>
-        <h3>💰 今月のゆるみ予算</h3>
+        <h3 style={sectionTitle}>💰 今月のゆるみ予算</h3>
         <input
           type="number"
           value={budget}
@@ -286,7 +286,7 @@ export default function InputPage() {
 
       {/* 支出入力 */}
       <div style={card}>
-        <h3>✍ 支出入力</h3>
+        <h3 style={sectionTitle}>✍ 支出入力</h3>
 
         <div style={field}>
           <div style={fieldInner}>
@@ -361,7 +361,7 @@ export default function InputPage() {
       </div>
 
       <div style={card}>
-        <h3>📌 固定費登録</h3>
+        <h3 style={sectionTitle}>📌 固定費登録</h3>
 
         <input
           style={inputStyle}
@@ -385,7 +385,7 @@ export default function InputPage() {
       </div>
 
       <div style={card}>
-        <h4>登録済み固定費</h4>
+        <h4 style={sectionTitle}>登録済み固定費</h4>
 
         {fixedCosts.map((f) => (
           <div
@@ -415,6 +415,12 @@ export default function InputPage() {
 }
 
 /* ===== スタイル ===== */
+
+const sectionTitle = {
+  fontSize: 20,
+  fontWeight: "bold",
+  marginBottom: 8
+}
 
 const inputStyle : CSSProperties = {
   padding: "8px",
