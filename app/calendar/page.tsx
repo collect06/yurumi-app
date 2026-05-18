@@ -178,9 +178,14 @@ export default function CalendarPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: 20 }}>
-        読み込み中...
+    <div style={loadingWrap}>
+      <div style={loadingCard}>
+        <div style={spinner}></div>
+        <div style={loadingText}>
+          読み込み中...
+        </div>
       </div>
+    </div>
     )
   }
 
@@ -525,4 +530,37 @@ const budgetBar = {
   height: "100%",
   background: "#22c55e",
   transition: "width 0.3s ease"
+}
+
+const loadingWrap = {
+  minHeight: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: "#f9fafb"
+}
+
+const loadingCard = {
+  background: "white",
+  padding: "24px 32px",
+  borderRadius: "16px",
+  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  display: "flex",
+  flexDirection: "column" as const,
+  alignItems: "center",
+  gap: "16px"
+}
+
+const loadingText = {
+  fontSize: "14px",
+  color: "#666"
+}
+
+const spinner = {
+  width: "36px",
+  height: "36px",
+  border: "4px solid #e5e7eb",
+  borderTop: "4px solid #22c55e",
+  borderRadius: "50%",
+  animation: "spin 1s linear infinite"
 }
