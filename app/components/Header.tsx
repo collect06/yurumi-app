@@ -6,7 +6,7 @@ import Link from "next/link"
 export default function Header() {
   return (
     <div style={headerStyle}>
-      <h2 style={{ margin: 0 }}>ゆるみ家計簿</h2>
+      <h2 style={{ margin: 0 }}>ゆるみ家計簿dev</h2>
 
       <Link href="/settings" style={gearBtn}>
         ⚙️
