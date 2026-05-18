@@ -25,6 +25,8 @@ export default function CalendarPage() {
 
   const [budget, setBudget] = useState(0)
 
+  const [loading, setLoading] = useState(true)
+
   const [userId, setUserId] = useState("")
 
   useEffect(() => {
@@ -50,6 +52,7 @@ export default function CalendarPage() {
   }, [month])
 
   const fetchData = async (userId: string) => {
+    setLoading(true)
     const { data } = await supabase
       .from("expenses")
       .select(`*,category:categories(id,name)`)
@@ -70,6 +73,7 @@ export default function CalendarPage() {
     } else {
       setBudget(0)
     }
+    setLoading(false)
   }
 
   const fetchCategories = async (userId: string) => {
@@ -171,6 +175,14 @@ export default function CalendarPage() {
     if (!e.is_waste) return sum
     return sum + e.amount
   }, 0)
+
+  if (loading) {
+    return (
+      <div style={{ padding: 20 }}>
+        読み込み中...
+      </div>
+    )
+  }
 
   return (
     <div>
