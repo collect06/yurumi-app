@@ -556,6 +556,12 @@ export default function ViewPage() {
 
 /* スタイル */
 
+const sectionTitle = {
+  fontSize: 20,
+  fontWeight: "bold",
+  marginBottom: 8
+}
+
 const container = {
   maxWidth: 500,
   margin: "0 auto",
