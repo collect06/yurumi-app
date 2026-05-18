@@ -3,10 +3,12 @@
 import { CSSProperties } from "react"
 import Link from "next/link"
 
+const appName = process.env.NEXT_PUBLIC_APP_NAME
+
 export default function Header() {
   return (
     <div style={headerStyle}>
-      <h2 style={{ margin: 0 }}>ゆるみ家計簿_dev</h2>
+      <h2 style={{ margin: 0 }}>{appName}</h2>
 
       <Link href="/settings" style={gearBtn}>
         ⚙️
