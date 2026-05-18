@@ -30,6 +30,7 @@ export default function InputPage() {
     new Date().toISOString().split("T")[0]
   )
 
+  const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState("")
 
   // 予算取得
@@ -55,7 +56,7 @@ export default function InputPage() {
   }, [month])
 
   const fetchAll = async (userId: string) => {
-
+    setLoading(true)
     const {
       data: { user }
     } = await supabase.auth.getUser()
@@ -124,6 +125,7 @@ export default function InputPage() {
           })
         }
       }
+    setLoading(false)
     }
 
   // 予算保存
@@ -232,6 +234,14 @@ export default function InputPage() {
       
 
     if (data) setFixedCosts(data)
+  }
+
+  if (loading) {
+    return (
+      <div style={{ padding: 20 }}>
+        読み込み中...
+      </div>
+    )
   }
 
   return (
