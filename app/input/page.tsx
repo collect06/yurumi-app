@@ -417,7 +417,7 @@ export default function InputPage() {
 /* ===== スタイル ===== */
 
 const sectionTitle = {
-  fontSize: 18,
+  fontSize: 16,
   fontWeight: "bold",
   marginBottom: 8
 }
