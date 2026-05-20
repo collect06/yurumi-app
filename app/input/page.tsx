@@ -4,6 +4,7 @@ import { supabase } from "../../lib/supabase"
 import { CSSProperties } from "react"
 import Header from "../components/Header"
 import { useRouter } from "next/navigation"
+import { formatYen } from "@/lib/format"
 
 export default function InputPage() {
 
@@ -276,7 +277,7 @@ export default function InputPage() {
           type="number"
           value={budget}
           onChange={(e) => setBudget(e.target.value)}
-          placeholder="例：30000"
+          placeholder="例：30,000"
           style={input}
         />
         <button style={primaryButton} onClick={saveBudget}>
@@ -397,7 +398,7 @@ export default function InputPage() {
               marginBottom: "8px"
             }}
           >
-            <span>{f.name} {f.amount}円</span>
+            <span>{f.name} {formatYen(f.amount)}円</span>
 
             <button
               style={deleteButtonStyle}
