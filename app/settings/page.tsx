@@ -11,6 +11,7 @@ export default function SettingsPage() {
   const [newCategory, setNewCategory] = useState("")
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState("")
+  const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState("")
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export default function SettingsPage() {
   }, [])
 
   const fetchCategories = async (userId: string) => {
+    setLoading(true)
     const { data } = await supabase
       .from("categories")
       .select("*")
@@ -42,6 +44,8 @@ export default function SettingsPage() {
       .order("sort_order", { ascending: true })
 
     if (data) setCategories(data)
+
+    setLoading(false)
   }
 
   const addCategory = async () => {
@@ -173,6 +177,25 @@ export default function SettingsPage() {
     fetchCategories(userId)
   }
 
+  const logout = async () => {
+    if (!confirm("ログアウトしますか？")) return
+    await supabase.auth.signOut()
+    router.push("/login")
+  }
+
+  if (loading) {
+  return (
+    <div style={loadingWrap}>
+      <div style={loadingCard}>
+        <div style={spinner}></div>
+          <div style={loadingText}>
+            読み込み中...
+          </div>
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <div style={container}>
 
@@ -181,7 +204,7 @@ export default function SettingsPage() {
         ← 戻る
       </button>
 
-      <h2>⚙️ 設定</h2>
+      <h2 style={{fontWeight: "bold"}>⚙️ 設定</h2>
 
       {/* カテゴリ追加 */}
       <div style={card}>
@@ -295,6 +318,11 @@ export default function SettingsPage() {
   </div>
 ))}
       </div>
+
+    <button style={{...deleteBtn, marginTop: 16}} onClick={logout}>
+        ログアウト
+    </button>
+      
     </div>
   )
 }
@@ -400,4 +428,37 @@ const sectionTitle = {
   fontSize: 20,
   fontWeight: "bold",
   marginBottom: 8
+}
+
+const loadingWrap = {
+  minHeight: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: "#f9fafb"
+}
+
+const loadingCard = {
+  background: "white",
+  padding: "24px 32px",
+  borderRadius: "16px",
+  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  display: "flex",
+  flexDirection: "column" as const,
+  alignItems: "center",
+  gap: "16px"
+}
+
+const loadingText = {
+  fontSize: "14px",
+  color: "#666"
+}
+
+const spinner = {
+  width: "36px",
+  height: "36px",
+  border: "4px solid #e5e7eb",
+  borderTop: "4px solid #22c55e",
+  borderRadius: "50%",
+  animation: "spin 1s linear infinite"
 }
