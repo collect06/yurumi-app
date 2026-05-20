@@ -25,6 +25,8 @@ export default function CalendarPage() {
 
   const [budget, setBudget] = useState(0)
 
+  const [loading, setLoading] = useState(true)
+  
   const [userId, setUserId] = useState("")
 
   useEffect(() => {
@@ -50,6 +52,7 @@ export default function CalendarPage() {
   }, [month])
 
   const fetchData = async (userId: string) => {
+    setLoading(true)
     const { data } = await supabase
       .from("expenses")
       .select(`*,category:categories(id,name)`)
@@ -70,6 +73,7 @@ export default function CalendarPage() {
     } else {
       setBudget(0)
     }
+    setLoading(false)
   }
 
   const fetchCategories = async (userId: string) => {
@@ -172,6 +176,19 @@ export default function CalendarPage() {
     return sum + e.amount
   }, 0)
 
+  if (loading) {
+    return (
+    <div style={loadingWrap}>
+      <div style={loadingCard}>
+        <div style={spinner}></div>
+        <div style={loadingText}>
+          読み込み中...
+        </div>
+      </div>
+    </div>
+    )
+  }
+  
   return (
     <div>
       <Header />
@@ -291,7 +308,7 @@ export default function CalendarPage() {
       {/* ===== 詳細 ===== */}
       {selectedDate && (
         <div style={detailBox}>
-          <h3>{selectedDate} の支出</h3>
+          <h3 style={sectionTitle}>{selectedDate} の支出</h3>
 
           {selectedExpenses.length === 0 && <p>なし</p>}
 
@@ -390,6 +407,12 @@ export default function CalendarPage() {
 }
 
 /* ===== スタイル ===== */
+
+const sectionTitle = {
+  fontSize: 20,
+  fontWeight: "bold",
+  marginBottom: 8
+}
 
 const monthHeader = {
   display: "flex",
@@ -513,4 +536,37 @@ const budgetBar = {
   height: "100%",
   background: "#22c55e",
   transition: "width 0.3s ease"
+}
+
+const loadingWrap = {
+  minHeight: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: "#f9fafb"
+}
+
+const loadingCard = {
+  background: "white",
+  padding: "24px 32px",
+  borderRadius: "16px",
+  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  display: "flex",
+  flexDirection: "column" as const,
+  alignItems: "center",
+  gap: "16px"
+}
+
+const loadingText = {
+  fontSize: "14px",
+  color: "#666"
+}
+
+const spinner = {
+  width: "36px",
+  height: "36px",
+  border: "4px solid #e5e7eb",
+  borderTop: "4px solid #22c55e",
+  borderRadius: "50%",
+  animation: "spin 1s linear infinite"
 }
