@@ -30,6 +30,8 @@ export default function InputPage() {
     new Date().toISOString().split("T")[0]
   )
 
+  const [loading, setLoading] = useState(true)
+  
   const [userId, setUserId] = useState("")
 
   // 予算取得
@@ -55,6 +57,7 @@ export default function InputPage() {
   }, [month])
 
   const fetchAll = async (userId: string) => {
+    setLoading(true)
 
     const {
       data: { user }
@@ -63,68 +66,69 @@ export default function InputPage() {
     if (!user) return
       
     // 予算
-      const { data: budgetData } = await supabase
-        .from("budgets")
-        .select("*")
-        .eq("month", month)
-        .eq("user_id", userId)
-        .single()
+    const { data: budgetData } = await supabase
+      .from("budgets")
+      .select("*")
+      .eq("month", month)
+      .eq("user_id", userId)
+      .single()
 
-      if (budgetData) setBudget(String(budgetData.amount))
-      else setBudget("")
+    if (budgetData) setBudget(String(budgetData.amount))
+    else setBudget("")
 
-      // カテゴリ
-      const { data: catData } = await supabase
-        .from("categories")
-        .select("*")
-        .eq("is_active", true)
-        .eq("user_id", userId)
-        .order("sort_order", { ascending: true })
+    // カテゴリ
+    const { data: catData } = await supabase
+      .from("categories")
+      .select("*")
+      .eq("is_active", true)
+      .eq("user_id", userId)
+      .order("sort_order", { ascending: true })
 
-      if (catData) {
-        setCategories(catData)
-        if (catData.length > 0) setCategoryId(catData[0].id)
-      }
+    if (catData) {
+      setCategories(catData)
+      if (catData.length > 0) setCategoryId(catData[0].id)
+    }
 
-      // 固定費
-      const { data: fixed } = await supabase
-        .from("fixed_costs")
-        .select("*")
-        .eq("user_id", userId)
-        .is("end_month", null)
+    // 固定費
+    const { data: fixed } = await supabase
+      .from("fixed_costs")
+      .select("*")
+      .eq("user_id", userId)
+      .is("end_month", null)
 
-      setFixedCosts(fixed || [])
+    setFixedCosts(fixed || [])
 
-      // 固定費をexpensesに反映
-      for (const f of fixed || []) {
-        // 月条件
-        if (/*f.start_month &&*/ f.start_month > month) continue
-        if (/*f.end_month &&*/ f.end_month <= month) continue
+    // 固定費をexpensesに反映
+    for (const f of fixed || []) {
+      // 月条件
+      if (/*f.start_month &&*/ f.start_month > month) continue
+      if (/*f.end_month &&*/ f.end_month <= month) continue
         
-        const { data: existing } = await supabase
-          .from("expenses")
-          .select("id")
-          .eq("month", month)
-          .eq("fixed_cost_id", f.id)
-          .eq("user_id", userId)
+      const { data: existing } = await supabase
+        .from("expenses")
+        .select("id")
+        .eq("month", month)
+        .eq("fixed_cost_id", f.id)
+        .eq("user_id", userId)
 
-        if (!existing || existing.length === 0) {
-          await supabase.from("expenses").upsert({
-            amount: f.amount,
-            memo: f.name,
-            month,
-            is_waste: false,
-            is_fixed: true,
-            date: `${month}-01`,
-            category_id: null,
-            fixed_cost_id: f.id,
-            user_id: userId
-          }, {
-            onConflict: "month,fixed_cost_id"
-          })
-        }
+      if (!existing || existing.length === 0) {
+        await supabase.from("expenses").upsert({
+          amount: f.amount,
+          memo: f.name,
+          month,
+          is_waste: false,
+          is_fixed: true,
+          date: `${month}-01`,
+          category_id: null,
+          fixed_cost_id: f.id,
+          user_id: userId
+        }, {
+          onConflict: "month,fixed_cost_id"
+        })
       }
     }
+    setLoading(false)
+  }
 
   // 予算保存
   const saveBudget = async () => {
@@ -234,6 +238,19 @@ export default function InputPage() {
     if (data) setFixedCosts(data)
   }
 
+  if (loading) {
+    return (
+    <div style={loadingWrap}>
+      <div style={loadingCard}>
+        <div style={spinner}></div>
+        <div style={loadingText}>
+          読み込み中...
+        </div>
+      </div>
+    </div>
+    )
+  }
+  
   return (
     <div>
       <Header />
@@ -242,7 +259,7 @@ export default function InputPage() {
 
       {/* 月選択 */}
       <div style={card}>
-        <h3>📅 月選択</h3>
+        <h3 style={sectionTitle}>📅 月選択</h3>
         <input
           type="month"
           value={month}
@@ -256,7 +273,7 @@ export default function InputPage() {
 
       {/* 予算設定 */}
       <div style={card}>
-        <h3>💰 今月のゆるみ予算</h3>
+        <h3 style={sectionTitle}>💰 今月のゆるみ予算</h3>
         <input
           type="number"
           value={budget}
@@ -271,7 +288,7 @@ export default function InputPage() {
 
       {/* 支出入力 */}
       <div style={card}>
-        <h3>✍ 支出入力</h3>
+        <h3 style={sectionTitle}>✍ 支出入力</h3>
 
         <div style={field}>
           <div style={fieldInner}>
@@ -346,7 +363,7 @@ export default function InputPage() {
       </div>
 
       <div style={card}>
-        <h3>📌 固定費登録</h3>
+        <h3 style={sectionTitle}>📌 固定費登録</h3>
 
         <input
           style={inputStyle}
@@ -370,7 +387,7 @@ export default function InputPage() {
       </div>
 
       <div style={card}>
-        <h4>登録済み固定費</h4>
+        <h4 style={sectionTitle}>登録済み固定費</h4>
 
         {fixedCosts.map((f) => (
           <div
@@ -400,6 +417,12 @@ export default function InputPage() {
 }
 
 /* ===== スタイル ===== */
+
+const sectionTitle = {
+  fontSize: 16,
+  fontWeight: "bold",
+  marginBottom: 8
+}
 
 const inputStyle : CSSProperties = {
   padding: "8px",
@@ -503,4 +526,37 @@ const selectArrow : CSSProperties = {
   pointerEvents: "none",
   fontSize: 12,
   color: "#666"
+}
+
+const loadingWrap = {
+  minHeight: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: "#f9fafb"
+}
+
+const loadingCard = {
+  background: "white",
+  padding: "24px 32px",
+  borderRadius: "16px",
+  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  display: "flex",
+  flexDirection: "column" as const,
+  alignItems: "center",
+  gap: "16px"
+}
+
+const loadingText = {
+  fontSize: "14px",
+  color: "#666"
+}
+
+const spinner = {
+  width: "36px",
+  height: "36px",
+  border: "4px solid #e5e7eb",
+  borderTop: "4px solid #22c55e",
+  borderRadius: "50%",
+  animation: "spin 1s linear infinite"
 }
