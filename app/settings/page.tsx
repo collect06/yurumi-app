@@ -320,7 +320,7 @@ export default function SettingsPage() {
 ))}
       </div>
 
-      <button style={..deleteBtn, marginTop: 16} onClick={logout}>
+      <button style={{...deleteBtn, marginTop: 16}} onClick={logout}>
         ログアウト
       </button>
       
