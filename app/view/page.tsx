@@ -44,6 +44,8 @@ export default function ViewPage() {
 
   const targetExpenses = expenses.filter(e => !e.is_fixed)
 
+  const [loading, setLoading] = useState(true)
+
   const [userId, setUserId] = useState("")
 
   useEffect(() => {
@@ -81,6 +83,7 @@ export default function ViewPage() {
   }
 
   const fetchData = async (userId: string) => {
+    setLoading(true)
     const {
       data: { user }
     } = await supabase.auth.getUser()
@@ -104,6 +107,8 @@ export default function ViewPage() {
 
     if (budgetData) setBudget(budgetData.amount)
     else setBudget(0)
+    
+    setLoading(false)
   }
 
   // フィルター使用カテゴリ抽出
@@ -247,6 +252,19 @@ export default function ViewPage() {
         : new Date(a.date).getTime() - new Date(b.date).getTime()
     )
 
+  if (loading) {
+    return (
+    <div style={loadingWrap}>
+      <div style={loadingCard}>
+        <div style={spinner}></div>
+        <div style={loadingText}>
+          読み込み中...
+        </div>
+      </div>
+    </div>
+    )
+  }
+
   return (
     <div>
       <Header />
@@ -277,7 +295,7 @@ export default function ViewPage() {
         ...card,
         paddingBottom: 30
       }}>
-        <h3>カテゴリ別グラフ</h3>
+        <h3 style={sectionTitle}>カテゴリ別グラフ</h3>
       
         <div
           style={{
@@ -423,7 +441,7 @@ export default function ViewPage() {
       </select>
 
       <div style={card}>
-        <h3>支出一覧</h3>
+        <h3 style={sectionTitle}>支出一覧</h3>
 
         {filteredExpenses.map((e) => (
           <div
@@ -538,6 +556,12 @@ export default function ViewPage() {
 
 /* スタイル */
 
+const sectionTitle = {
+  fontSize: 20,
+  fontWeight: "bold",
+  marginBottom: 8
+}
+
 const container = {
   maxWidth: 500,
   margin: "0 auto",
@@ -603,4 +627,37 @@ const buttonStyle = {
   padding: "6px 10px",
   borderRadius: "6px",
   border: "none"
+}
+
+const loadingWrap = {
+  minHeight: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: "#f9fafb"
+}
+
+const loadingCard = {
+  background: "white",
+  padding: "24px 32px",
+  borderRadius: "16px",
+  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+  display: "flex",
+  flexDirection: "column" as const,
+  alignItems: "center",
+  gap: "16px"
+}
+
+const loadingText = {
+  fontSize: "14px",
+  color: "#666"
+}
+
+const spinner = {
+  width: "36px",
+  height: "36px",
+  border: "4px solid #e5e7eb",
+  borderTop: "4px solid #22c55e",
+  borderRadius: "50%",
+  animation: "spin 1s linear infinite"
 }
