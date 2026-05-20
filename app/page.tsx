@@ -13,13 +13,13 @@ export default function Home() {
   const [tab, setTab] = useState("input")
   const [expenses, setExpenses] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
-  const [fixedCosts, setFixedCosts] = useState<any[]>([])
-  const [budget, setBudget] = useState(0)
+  //const [fixedCosts, setFixedCosts] = useState<any[]>([])
+  //const [budget, setBudget] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  const [month, setMonth] = useState(
+  /*const [month, setMonth] = useState(
     new Date().toISOString().slice(0, 7)
-  )
+  )*/
 
   const [userId, setUserId] = useState("")
   
@@ -40,120 +40,40 @@ export default function Home() {
   
       setUserId(userId)
 
-      await fetchAll(userId, month)
+      const { data: expensesData } = await supabase
+        .from("expenses")
+        .select("*")
+        .eq("user_id", userId)
   
-      setLoading(false)
+      const { data: categoriesData } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .order("sort_order")
+  
+      setExpenses(expensesData || [])
+      setCategories(categoriesData || [])
+
     }
   
     init()
   }, [])
 
-  useEffect(() => {
-    if (!userId) return
-
-    fetchAll(userId, month)
-  }, [month])
-
-  const fetchAll = async (
-    userId: string,
-    month: string
-  ) => {
-    // expenses
-    const { data: expensesData } = await supabase
-      .from("expenses")
-      .select(`
-        *,
-        category:categories(id,name)
-      `)
-      .eq("user_id", userId)
-      .eq("month", month)
-
-    if (expensesData) {
-      setExpenses(expensesData)
-    }
-
-    // categories
-    const { data: categoriesData } = await supabase
-      .from("categories")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("is_active", true)
-      .order("sort_order", { ascending: true })
-
-    if (categoriesData) {
-      setCategories(categoriesData)
-    }
-
-    // fixed_costs
-    const { data: fixedCostsData } = await supabase
-      .from("fixed_costs")
-      .select("*")
-      .eq("user_id", userId)
-
-    if (fixedCostsData) {
-      setFixedCosts(fixedCostsData)
-    }
-
-    // budget
-    const { data: budgetData } = await supabase
-      .from("budgets")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("month", month)
-      .single()
-
-    if (budgetData) {
-      setBudget(budgetData.amount)
-    } else {
-      setBudget(0)
-    }
-  }
-
-  if (loading) {
-    return <div>読み込み中...</div>
-  }
   
-
   return (
     <div style={{ paddingBottom: "100px"}}>
       {/* メイン表示 */}
       <div style={{ display: tab === "input" ? "block" : "none" }}>
-        <InputPage
-          expenses={expenses}
-          categories={categories}
-          fixedCosts={fixedCosts}
-          budget={budget}
-          fetchAll={() => fetchAll(userId, month)}
-          userId={userId}
-          month={month}
-          setMonth={setMonth}
-        />
+        <InputPage />
       </div>
 
       <div style={{ display: tab === "view" ? "block" : "none" }}>
-        <ViewPage
-          expenses={expenses}
-          categories={categories}
-          fixedCosts={fixedCosts}
-          budget={budget}
-          fetchAll={() => fetchAll(userId, month)}
-          userId={userId}
-          month={month}
-          setMonth={setMonth}
-        />
+        <ViewPage />
       </div>
 
       <div style={{ display: tab === "calendar" ? "block" : "none" }}>
-        <CalendarPage
-          expenses={expenses}
-          categories={categories}
-          fixedCosts={fixedCosts}
-          budget={budget}
-          fetchAll={() => fetchAll(userId, month)}
-          userId={userId}
-          month={month}
-          setMonth={setMonth}
-        />
+        <CalendarPage />
       </div>
 
       {/* 下タブ */}
