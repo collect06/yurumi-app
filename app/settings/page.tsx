@@ -204,7 +204,7 @@ export default function SettingsPage() {
 
       <h2>⚙️ 設定</h2>
 
-      <button onClick={logout}>
+      <button style={deleteBtn} onClick={logout}>
         ログアウト
       </button>
       
