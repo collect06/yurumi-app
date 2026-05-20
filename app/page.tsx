@@ -30,9 +30,17 @@ export default function Home() {
   return (
     <div style={{ paddingBottom: "100px"}}>
       {/* メイン表示 */}
-      {tab === "input" && <InputPage />}
-      {tab === "view" && <ViewPage />}
-      {tab === "calendar" && <CalendarPage />}
+      <div style={{ display: tab === "input" ? "block" : "none" }}>
+        <InputPage />
+      </div>
+      
+      <div style={{ display: tab === "view" ? "block" : "none" }}>
+        <ViewPage />
+      </div>
+      
+      <div style={{ display: tab === "calendar" ? "block" : "none" }}>
+        <CalendarPage />
+      </div>
 
       {/* 下タブ */}
       <div style={tabBarStyle}>
