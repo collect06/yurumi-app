@@ -11,20 +11,45 @@ import { supabase } from "@/lib/supabase"
 
 export default function Home() {
   const [tab, setTab] = useState("input")
+  const [expenses, setExpenses] = useState<any[]>([])
+  const [categories, setCategories] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const [userId, setUserId] = useState("")
+  
   const router = useRouter()
 
   useEffect(() => {
-    const checkUser = async () => {
+    const init = async () => {
       const {
         data: { user }
       } = await supabase.auth.getUser()
-
-      if (!user) {
-        router.push("/login")
-      }
+  
+      if (!user) return
+  
+      const userId = user.id
+  
+      setUserId(userId)
+  
+      const { data: expensesData } = await supabase
+        .from("expenses")
+        .select("*")
+        .eq("user_id", userId)
+  
+      const { data: categoriesData } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .order("sort_order")
+  
+      setExpenses(expensesData || [])
+      setCategories(categoriesData || [])
+  
+      setLoading(false)
     }
-
-    checkUser()
+  
+    init()
   }, [])
 
   return (
