@@ -204,7 +204,7 @@ export default function SettingsPage() {
         ← 戻る
       </button>
 
-      <h2 style={{fontWeight: "bold"}>⚙️ 設定</h2>
+      <h2 style={{fontWeight: "bold"}}>⚙️ 設定</h2>
 
       {/* カテゴリ追加 */}
       <div style={card}>
