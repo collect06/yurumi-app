@@ -181,13 +181,18 @@ export default function SettingsPage() {
     <div style={loadingWrap}>
       <div style={loadingCard}>
         <div style={spinner}></div>
-        <div style={loadingText}>
-          読み込み中...
+          <div style={loadingText}>
+            読み込み中...
+          </div>
         </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
+
+  const logout = async () => {
+    await supabase.auth.signOut()
+    router.push("/login")
+  }
 
   return (
     <div style={container}>
@@ -199,6 +204,10 @@ export default function SettingsPage() {
 
       <h2>⚙️ 設定</h2>
 
+      <button onClick={logout}>
+        ログアウト
+      </button>
+      
       {/* カテゴリ追加 */}
       <div style={card}>
         <h3 style={sectionTitle}>カテゴリ追加</h3>
