@@ -67,6 +67,8 @@ export default function SettingsPage() {
       user_id: userId
     })
 
+    alert("追加しました")
+    
     setNewCategory("")
     fetchCategories(userId)
   }
@@ -190,6 +192,7 @@ export default function SettingsPage() {
   }
 
   const logout = async () => {
+    if (!confirm("ログアウトしますか？")) return
     await supabase.auth.signOut()
     router.push("/login")
   }
@@ -203,10 +206,6 @@ export default function SettingsPage() {
       </button>
 
       <h2>⚙️ 設定</h2>
-
-      <button style={deleteBtn} onClick={logout}>
-        ログアウト
-      </button>
       
       {/* カテゴリ追加 */}
       <div style={card}>
@@ -229,29 +228,29 @@ export default function SettingsPage() {
         <h3 style={sectionTitle}>カテゴリ管理</h3>
 
         {categories.map((c, index) => (
-  <div
-    key={c.id}
-    style={{
-      marginBottom: editingId === c.id ? 12 : 2,
-      padding: editingId === c.id ? 10 : 2,
-      borderRadius: 10,
-      background: editingId === c.id ? "#f0fdf4" : "transparent",
-      transition: "0.2s",
-      minHeight: 44,
-      border: editingId === c.id ? "1px solid #bbf7d0" : "none"
-    }}
-  >
+          <div
+            key={c.id}
+            style={{
+              marginBottom: editingId === c.id ? 12 : 2,
+              padding: editingId === c.id ? 10 : 2,
+              borderRadius: 10,
+              background: editingId === c.id ? "#f0fdf4" : "transparent",
+              transition: "0.2s",
+              minHeight: 44,
+              border: editingId === c.id ? "1px solid #bbf7d0" : "none"
+            }}
+          >
 
-    {editingId === c.id ? (
-      <>
-        {/* 1段目 */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          minHeight: 36,
-          gap: 8
-        }}>
+        {editingId === c.id ? (
+          <>
+            {/* 1段目 */}
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              minHeight: 36,
+              gap: 8
+            }}>
           
           <input
             style={{ ...input, flex: 1, marginRight: 10, marginTop: 0 }}
@@ -320,6 +319,11 @@ export default function SettingsPage() {
   </div>
 ))}
       </div>
+
+      <button style={deleteBtn} onClick={logout}>
+        ログアウト
+      </button>
+      
     </div>
   )
 }
