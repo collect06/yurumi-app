@@ -430,7 +430,7 @@ export default function ViewPage() {
           )
         }
       >
-        <option value="all">すべて</option>
+        <option value="all">カテゴリすべて</option>
         {usedCategories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
@@ -447,7 +447,7 @@ export default function ViewPage() {
         }
       >
 
-        <option value="all">すべて</option>
+        <option value="all">支出すべて</option>
         <option value="normal">通常支出</option>
         <option value="waste">ゆるみ支出</option>
       </select>
