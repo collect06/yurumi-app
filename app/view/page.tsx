@@ -37,7 +37,9 @@ export default function ViewPage() {
   
   const [filterCategoryId, setFilterCategoryId] = useState<number | "all">("all")
   
-  const [showWasteOnly, setShowWasteOnly] = useState(false)
+  const [wasteFilter, setWasteFilter] = useState<
+    "all" | "waste" | "normal"
+  >("all")
   const [sortOrder, setSortOrder] = useState("desc")
 
   const [categories, setCategories] = useState<any[]>([])
@@ -237,15 +239,25 @@ export default function ViewPage() {
   }
 }
   const filteredExpenses = targetExpenses
-    .filter((e) => {
-      if (showWasteOnly && !e.is_waste) return false
-  
-      if (filterCategoryId !== "all" && e.category_id !== filterCategoryId) {
-        return false
-      }
-  
-      return true
-    })
+  .filter((e) => {
+
+    if (wasteFilter === "waste" && !e.is_waste) {
+      return false
+    }
+
+    if (wasteFilter === "normal" && e.is_waste) {
+      return false
+    }
+
+    if (
+      filterCategoryId !== "all" &&
+      e.category_id !== filterCategoryId
+    ) {
+      return false
+    }
+
+    return true
+  })
     .sort((a, b) =>
       sortOrder === "desc"
         ? new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -426,14 +438,19 @@ export default function ViewPage() {
         ))}
       </select>
 
-      <label>
-        <input
-          type="checkbox"
-          checked={showWasteOnly}
-          onChange={(e) => setShowWasteOnly(e.target.checked)}
-        />
-        ゆるみ支出のみ
-      </label>
+      <select
+        value={wasteFilter}
+        onChange={(e) =>
+          setWasteFilter(
+            e.target.value as "all" | "waste" | "normal"
+          )
+        }
+      >
+
+        <option value="all">すべて</option>
+        <option value="normal">通常支出</option>
+        <option value="waste">ゆるみ支出</option>
+      </select>
 
       <select onChange={(e) => setSortOrder(e.target.value)}>
         <option value="desc">新しい順</option>
